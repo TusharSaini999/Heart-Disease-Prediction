@@ -1,11 +1,17 @@
 const express = require("express");
+const cors = require("cors");
+
+
+const { loadModel } = require("./heart-disease-model/model");
+const routes = require("./ai");
+
 const app = express();
+app.use(express.json());
+app.use(cors());
+app.use("/api", routes);
+
 const PORT = 4000;
-
-const apiRoutes = require("./api");
-
-app.use("/api", apiRoutes);
-
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+app.listen(PORT, async () => {
+    await loadModel();
+    console.log(`Server running on port ${PORT}`);
 });
