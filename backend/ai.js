@@ -1,19 +1,27 @@
 const express = require("express");
-const { predict } = require("./heart-disease-model/model");
-
 const router = express.Router();
+const axios = require("axios");
+///curl -X POST "http://localhost:4000/ai" -H "Content-Type: application/json" -d "{\"features\": [63, 1, 3, 145, 233, 1, 0, 150, 0, 2.3, 0, 0, 1]}"
 
-router.post("/predict", async (req, res) => {
+///curl -X POST "http://localhost:4000/ai" -H "Content-Type: application/json" -d "{\"features\": [63, 1, 3, 145, 233, 1, 0, 150, 0, 2.3, 0, 0, 1]}"
+///{"predicted_class":1}
+router.post("/", async (req, res) => {
     try {
         const { features } = req.body;
+
         if (!features || !Array.isArray(features)) {
             return res.status(400).json({ error: "Invalid input format" });
         }
 
-        const predictedClass = await predict(features);
-        res.json({ predicted_class: predictedClass });
+        // Send request to Python prediction server
+        const response = await axios.post("http://localhost:8000/predict", { features });
+
+        res.json(response.data);
     } catch (error) {
-        res.status(500).json({ error: "Prediction error", details: error.message });
+        res.status(500).json({
+            error: "Prediction error",
+            details: error.response ? error.response.data : error.message
+        });
     }
 });
 
