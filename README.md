@@ -14,7 +14,7 @@ The **Heart Disease Prediction** web application is an AI/ML-based solution desi
 - 🏗 **Frontend:** HTML, CSS, JavaScript, React.js
 - 🚀 **Backend:** Express.js
 - 🗄 **Database:** MySQL
-- 🤖 **AI/ML:** TensorFlow.js (for real-time AI-based predictions)
+- 🤖 **AI/ML:** 
 - ☁ **Deployment:** Hosted on Render
 
 ## 📝 Usage
