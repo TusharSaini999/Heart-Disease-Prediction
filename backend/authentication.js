@@ -181,7 +181,6 @@ router.put("/update-profile", verifyToken, upload.single("image"), async (req, r
       return res.status(400).json({ error: "Password is required to update profile!" });
     }
 
-  
     const sqlSelect = "SELECT password FROM users WHERE id = ?";
     db.query(sqlSelect, [userId], async (err, results) => {
       if (err) {
@@ -195,13 +194,11 @@ router.put("/update-profile", verifyToken, upload.single("image"), async (req, r
 
       const user = results[0];
 
-     
       const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) {
         return res.status(401).json({ error: "Incorrect password!" });
       }
 
-      
       if (image) {
         image = await sharp(image)
           .resize(200, 200) 
@@ -209,57 +206,79 @@ router.put("/update-profile", verifyToken, upload.single("image"), async (req, r
           .toBuffer();
       }
 
-      const updateFields = [];
-      const updateValues = [];
-
-      if (name) {
-        updateFields.push("name = ?");
-        updateValues.push(name);
-      }
       if (mobile_no) {
         if (!/^\d{10}$/.test(mobile_no)) {
           return res.status(400).json({ error: "Mobile number must be 10 digits!" });
         }
-        updateFields.push("mobile_no = ?");
-        updateValues.push(mobile_no);
+
+        const sqlCheckMobile = "SELECT id FROM users WHERE mobile_no = ? AND id != ?";
+        db.query(sqlCheckMobile, [mobile_no, userId], (checkErr, checkResults) => {
+          if (checkErr) {
+            console.error("Database Error:", checkErr);
+            return res.status(500).json({ error: "Database error occurred!" });
+          }
+
+          if (checkResults.length > 0) {
+            return res.status(400).json({ error: "Mobile number already in use!" });
+          }
+
+          updateProfile();
+        });
+      } else {
+        updateProfile();
       }
-      if (gender !== undefined) {
-        if (![0, 1].includes(Number(gender))) {
-          return res.status(400).json({ error: "Gender must be 0 (Female) or 1 (Male)!" });
+
+      function updateProfile() {
+        const updateFields = [];
+        const updateValues = [];
+
+        if (name) {
+          updateFields.push("name = ?");
+          updateValues.push(name);
         }
-        updateFields.push("gender = ?");
-        updateValues.push(gender);
-      }
-      if (dob) {
-        updateFields.push("dob = ?");
-        updateValues.push(dob);
-      }
-      if (image) {
-        updateFields.push("profile_photo = ?");
-        updateValues.push(image);
-      }
-
-      if (updateFields.length === 0) {
-        return res.status(400).json({ error: "No fields to update!" });
-      }
-
-      updateValues.push(userId);
-      const sqlUpdate = `UPDATE users SET ${updateFields.join(", ")} WHERE id = ?`;
-
-      db.query(sqlUpdate, updateValues, (updateErr) => {
-        if (updateErr) {
-          console.error("Database Error:", updateErr);
-          return res.status(500).json({ error: "Database error occurred!" });
+        if (mobile_no) {
+          updateFields.push("mobile_no = ?");
+          updateValues.push(mobile_no);
+        }
+        if (gender !== undefined) {
+          if (![0, 1].includes(Number(gender))) {
+            return res.status(400).json({ error: "Gender must be 0 (Female) or 1 (Male)!" });
+          }
+          updateFields.push("gender = ?");
+          updateValues.push(gender);
+        }
+        if (dob) {
+          updateFields.push("dob = ?");
+          updateValues.push(dob);
+        }
+        if (image) {
+          updateFields.push("profile_photo = ?");
+          updateValues.push(image);
         }
 
-        res.status(200).json({ message: "Profile updated successfully!" });
-      });
+        if (updateFields.length === 0) {
+          return res.status(400).json({ error: "No fields to update!" });
+        }
+
+        updateValues.push(userId);
+        const sqlUpdate = `UPDATE users SET ${updateFields.join(", ")} WHERE id = ?`;
+
+        db.query(sqlUpdate, updateValues, (updateErr) => {
+          if (updateErr) {
+            console.error("Database Error:", updateErr);
+            return res.status(500).json({ error: "Database error occurred!" });
+          }
+
+          res.status(200).json({ message: "Profile updated successfully!" });
+        });
+      }
     });
   } catch (error) {
     console.error("Update Profile Error:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
 
 ///Get Age and Gender
 ///curl -X GET "http://localhost:4000/auth/user-info" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoiam9obmRvZUBleGFtcGxlLmNvbSIsImlhdCI6MTc0MjQ2NDU4OSwiZXhwIjoxNzQzMDY5Mzg5fQ.NDuh8OVqV4kM6woCC8BrzXE40T7rdVBLLauGNyyoOLY"
