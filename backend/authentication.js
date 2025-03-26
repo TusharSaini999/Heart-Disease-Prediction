@@ -9,8 +9,6 @@ const sharp = require("sharp"); // Image processing library
 
 const router = express.Router();
 ///curl -X POST "http://localhost:4000/auth/signup" -H "Content-Type: application/json" -d "{\"name\":\"John Doe\",\"email\":\"johndoe@esamle.com\",\"mobile_no\":\"9877548210\",\"dob\":\"2000-05-15\",\"gender\":1,\"password\":\"12345578\"}"
-
-
 router.post("/signup", async (req, res) => {
   try {
     const { name, email, mobile_no, dob, gender, password } = req.body;
@@ -18,7 +16,6 @@ router.post("/signup", async (req, res) => {
     if (!name || !email || !mobile_no || !dob || gender === undefined || !password) {
       return res.status(400).json({ error: "All fields are required!" });
     }
-
 
     if (!/^\d{10}$/.test(mobile_no)) {
       return res.status(400).json({ error: "Mobile number must be exactly 10 digits!" });
@@ -32,18 +29,40 @@ router.post("/signup", async (req, res) => {
       return res.status(400).json({ error: "Password must be at least 8 characters long!" });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const sql = "INSERT INTO users (name, email, mobile_no, dob, gender, password) VALUES (?, ?, ?, ?, ?, ?)";
-    db.query(sql, [name, email, mobile_no, dob, gender, hashedPassword], (err, result) => {
+    db.query("SELECT * FROM users WHERE email = ?", [email], async (err, emailResults) => {
       if (err) {
         console.error("Database Error:", err);
         return res.status(500).json({ error: "Database error occurred!" });
       }
 
-      const token = jwt.sign({ userId: result.insertId, email }, process.env.JWT_SECRET, { expiresIn: "7d" });
+      if (emailResults.length > 0) {
+        return res.status(400).json({ error: "Email already exists!" });
+      }
 
-      res.status(201).json({ message: "User registered successfully!", token });
+      db.query("SELECT * FROM users WHERE mobile_no = ?", [mobile_no], async (err, mobileResults) => {
+        if (err) {
+          console.error("Database Error:", err);
+          return res.status(500).json({ error: "Database error occurred!" });
+        }
+
+        if (mobileResults.length > 0) {
+          return res.status(400).json({ error: "Mobile number already exists!" });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const insertUserSql = "INSERT INTO users (name, email, mobile_no, dob, gender, password) VALUES (?, ?, ?, ?, ?, ?)";
+        db.query(insertUserSql, [name, email, mobile_no, dob, gender, hashedPassword], (err, result) => {
+          if (err) {
+            console.error("Database Error:", err);
+            return res.status(500).json({ error: "Database error occurred!" });
+          }
+
+          const token = jwt.sign({ userId: result.insertId, email }, process.env.JWT_SECRET, { expiresIn: "7d" });
+
+          res.status(201).json({ message: "User registered successfully!", token });
+        });
+      });
     });
   } catch (error) {
     console.error("Signup Error:", error);
