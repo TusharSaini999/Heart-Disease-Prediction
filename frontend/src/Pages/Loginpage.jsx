@@ -4,12 +4,34 @@ import { Link, useNavigate } from "react-router-dom";
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+
+  const validateForm = () => {
+    const newErrors = {};
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(email)) {
+      newErrors.email = "Invalid email format";
+    }
+
+    if (!password.trim()) {
+      newErrors.password = "Password is required";
+    }
+
+    return newErrors;
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("User Logged In");
-    navigate("/");
+    const validationErrors = validateForm();
+
+    if (Object.keys(validationErrors).length === 0) {
+      console.log("User Logged In");
+      navigate("/login2");
+    } else {
+      setErrors(validationErrors);
+    }
   };
 
   return (
@@ -31,6 +53,8 @@ const LoginPage = () => {
             className="w-full mb-2 px-3 py-2 border rounded-lg"
             required
           />
+          {errors.email && <p className="text-red-500 text-sm mb-2">{errors.email}</p>}
+
           <input
             type="password"
             placeholder="Password"
@@ -39,12 +63,17 @@ const LoginPage = () => {
             className="w-full mb-2 px-3 py-2 border rounded-lg"
             required
           />
+          {errors.password && <p className="text-red-500 text-sm mb-2">{errors.password}</p>}
+
           <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded-lg">
             Log in
           </button>
         </form>
         <p className="text-center text-gray-700 mt-4">
-          Don't have an account? <Link to="/signup" className="text-blue-500">Sign Up</Link>
+          Don't have an account?{" "}
+          <Link to="/signup" className="text-blue-500">
+            Sign Up
+          </Link>
         </p>
       </div>
     </div>
