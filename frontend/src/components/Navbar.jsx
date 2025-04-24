@@ -1,7 +1,8 @@
 import { HiMiniBars3BottomRight } from "react-icons/hi2";
 import { useState } from "react";
 import { IoMdClose } from "react-icons/io";
-import { Link } from "react-router-dom";
+import { Link as ScrollLink } from 'react-scroll';
+import { Link as RouterLink } from 'react-router-dom';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -9,40 +10,45 @@ export default function Navbar() {
   return (
     <div className="sticky top-0 z-50 bg-[#F2F7FF] bg-opacity-80 p-3 backdrop-blur-md">
       <div className="mx-auto flex max-w-screen-xl items-center justify-between">
-        <Link to="/">
+        <ScrollLink to="/">
           <img
             className="h-[50px] rounded-full w-[50px] object-contain"
             src="https://th.bing.com/th/id/OIP.Y2dAxeNpJoEBfex-qXl3UAHaHa?w=512&h=512&rs=1&pid=ImgDetMain"
             alt="Logo"
           />
-        </Link>
+        </ScrollLink>
 
         <ul className="hidden items-center gap-10 md:flex">
           <li>
-            <Link className="text-primary-start hover:text-primary-start hover:opacity-100" to="/">
+            <ScrollLink className="text-primary-start hover:text-primary-start hover:opacity-100" to="/">
               Home
-            </Link>
+            </ScrollLink>
           </li>
           <li>
-            <Link className="text-para opacity-80 hover:text-primary-start hover:opacity-100" to="/about">
+            <ScrollLink to="about" style={{ cursor: 'pointer' }} smooth={true} duration={500} className="text-para opacity-80 hover:text-primary-start hover:opacity-100">
               About
-            </Link>
+            </ScrollLink>
           </li>
           <li>
-            <Link className="text-para opacity-80 hover:text-primary-start hover:opacity-100" to="/services">
+            <ScrollLink to="service" style={{ cursor: 'pointer' }} smooth={true} duration={500} className="text-para opacity-80 hover:text-primary-start hover:opacity-100">
               Service
-            </Link>
+            </ScrollLink>
           </li>
           <li>
-            <Link className="text-para opacity-80 hover:text-primary-start hover:opacity-100" to="/contact">
-              Contact
-            </Link>
+            <ScrollLink to="measure" style={{ cursor: 'pointer' }} smooth={true} duration={500} className="text-para opacity-80 hover:text-primary-start hover:opacity-100" >
+              Measure
+            </ScrollLink>
+          </li>
+          <li>
+            <ScrollLink to="mission" style={{ cursor: 'pointer' }} smooth={true} duration={500} className="text-para opacity-80 hover:text-primary-start hover:opacity-100" >
+              Mission
+            </ScrollLink>
           </li>
         </ul>
 
-        <Link to="/login" className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-7 py-4 rounded-full text-lg font-semibold hover:-rotate-3 transition">
+        <RouterLink to="/login" className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-7 py-4 rounded-full text-lg font-semibold hover:-rotate-3 transition">
           Login
-        </Link>
+        </RouterLink>
 
         {/* Mobile Screen */}
         <div className="relative md:hidden">
@@ -67,7 +73,7 @@ export default function Navbar() {
                   </Link>
                 </li>
                 <li>
-                  <Link className="text-para opacity-80 hover:text-primary-start hover:opacity-100" to="/about">
+                  <Link to="aboutSection" smooth={true} duration={500} className="text-para opacity-80 hover:text-primary-start hover:opacity-100">
                     About
                   </Link>
                 </li>
