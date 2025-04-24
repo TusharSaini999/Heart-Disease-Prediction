@@ -1,9 +1,12 @@
 import React from "react";
 import { Button } from "./ui";
 import { FaArrowAltCircleRight, FaWhatsapp } from "react-icons/fa";
+import { Link, Element } from 'react-scroll';
+
 
 export default function About() {
   return (
+  
     <div className="mx-auto flex max-w-screen-xl flex-col items-center justify-center gap-5 px-3 pt-28 md:flex-row md:pb-[145px] lg:gap-20 lg:px-0 lg:pt-[220px]">
       <div className="max-h-[425px] max-w-[486px]">
         <img
@@ -28,5 +31,6 @@ export default function About() {
         <Button title="Predict Now" Icon={FaArrowAltCircleRight} />
       </div>
     </div>
+   
   );
 }

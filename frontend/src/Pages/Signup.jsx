@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -11,7 +11,7 @@ const Signup = () => {
     password: "",
     confirmPassword: "",
   });
-
+  const navigate = useNavigate();
   const handleChange = (e) => {
     let { name, value } = e.target;
 
@@ -46,15 +46,7 @@ const Signup = () => {
             className="w-full mb-2 px-3 py-2 border rounded-lg"
             required
           />
-          <input
-            type="number"
-            name="age"
-            placeholder="Age"
-            value={formData.age}
-            onChange={handleChange}
-            className="w-full mb-2 px-3 py-2 border rounded-lg"
-            required
-          />
+        
           <select
             name="gender"
             value={formData.gender}
