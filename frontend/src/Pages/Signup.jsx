@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 const Signup = () => {
   const [formData, setFormData] = useState({
     name: "",
+    email: "",
     age: "",
     gender: "",
     mobile: "",
@@ -11,7 +12,9 @@ const Signup = () => {
     password: "",
     confirmPassword: "",
   });
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+
   const handleChange = (e) => {
     let { name, value } = e.target;
 
@@ -21,9 +24,38 @@ const Signup = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+    const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+
+    // Validate email
+    if (!emailPattern.test(formData.email)) {
+      newErrors.email = "Please enter a valid email address.";
+    }
+
+    // Validate password match
+    if (formData.password !== formData.confirmPassword) {
+      newErrors.password = "Passwords do not match.";
+    }
+
+    // Validate mobile number (max length 10)
+    if (formData.mobile.length > 10) {
+      newErrors.mobile = "Mobile number cannot exceed 10 digits.";
+    }
+
+    return newErrors;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    navigate("/");
+
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length === 0) {
+      // No validation errors, proceed to navigation
+      navigate("/login2");
+    } else {
+      setErrors(validationErrors);
+    }
   };
 
   return (
@@ -46,7 +78,18 @@ const Signup = () => {
             className="w-full mb-2 px-3 py-2 border rounded-lg"
             required
           />
-        
+          
+          <input
+            type="email"
+            name="email"
+            placeholder="Email Address"
+            value={formData.email}
+            onChange={handleChange}
+            className="w-full mb-2 px-3 py-2 border rounded-lg"
+            required
+          />
+          {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>} {/* Email validation error */}
+
           <select
             name="gender"
             value={formData.gender}
@@ -67,6 +110,8 @@ const Signup = () => {
             className="w-full mb-2 px-3 py-2 border rounded-lg"
             required
           />
+          {errors.mobile && <p className="text-red-500 text-sm">{errors.mobile}</p>} {/* Mobile validation error */}
+
           <input
             type="date"
             name="dob"
@@ -93,6 +138,8 @@ const Signup = () => {
             className="w-full mb-4 px-3 py-2 border rounded-lg"
             required
           />
+          {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>} {/* Password match error */}
+
           <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded-lg">
             Sign Up
           </button>

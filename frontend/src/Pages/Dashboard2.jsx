@@ -1,17 +1,14 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
 
-const Dashboard = () => {
+const Dashboard2 = () => {
   const [formData, setFormData] = useState({
-    name: "",
-    age: "",
-    gender: "",
-    restingBP: "",
-    cholesterol: "",
-    fastingSugar: "",
-    maxHeartRate: "",
+    ecgResults: "",
+    exerciseAngina: "",
+    stDepression: "",
+    stSlope: "",
+    majorVessels: "",
+    thalassemia: "",
   });
-   const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,8 +18,7 @@ const Dashboard = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Form submitted", formData);
-    navigate("/dashboard2");
-  
+    // Handle result generation logic here
   };
 
   return (
@@ -30,37 +26,33 @@ const Dashboard = () => {
       className="min-h-screen bg-cover bg-center flex items-center justify-center p-4"
       style={{
         backgroundImage:
-          "url('https://media.istockphoto.com/id/1320317422/photo/heart-health-concept.jpg?s=612x612&w=0&k=20&c=f4Tj9OZWp9yVc10_t6Z3WYFC6BBXrLhink1xO-JKrJY=')",
+          "url('https://media.istockphoto.com/id/1441193911/vector/3d-red-heart-with-pulse-line-with-magnifier-and-plus-icon-heartbeat-or-cardiogram-pulse-beat.jpg?s=612x612&w=0&k=20&c=9WTrkE8zkrV8c2QuhSH1rvkOzjxo0ndKCcJfwV24uik=')", // Replace with your actual image path
       }}
     >
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full max-w-6xl bg-white bg-opacity-90 rounded-xl p-8">
-        
+        {/* Left Section */}
         <div className="space-y-6">
           <h1 className="text-4xl font-bold">
             <span className="text-red-600">❤️ Heart</span> Disease Prediction
           </h1>
-          <p className="text-gray-600 text-lg">
-            Please provide the following basic information to proceed with the heart
-            disease prediction test.
-          </p>
-          <p className="text-gray-600 text-lg">
-            Please review and update your information if needed. After that, fill in the
-            additional details for prediction.
+          <p className="text-gray-600 text-lg font-semibold">
+            Your test report is almost ready! Please ensure all your information is accurate,
+            and proceed to the next step to receive your heart disease prediction. It helps us
+            provide the most accurate results based on your health data.
           </p>
           <div className="bg-white shadow p-4 rounded">
             <ul className="space-y-2">
-              <li>Name</li>
-              <li>Age</li>
-              <li>Gender</li>
-              <li>Resting Blood Pressure</li>
-              <li>Cholesterol Level</li>
-              <li>Fasting Blood Sugar</li>
-              <li>Maximum Heart Rate Achieved</li>
+              <li>Resting ECG Results</li>
+              <li>Exercise-Induced Angina</li>
+              <li>ST Depression</li>
+              <li>Slope of ST Segment</li>
+              <li>Number of Major Blood Vessels</li>
+              <li>Thalassemia Test Result</li>
             </ul>
           </div>
         </div>
 
-        
+        {/* Right Form Section */}
         <form
           onSubmit={handleSubmit}
           className="bg-gray-100 rounded-xl p-8 space-y-4 shadow"
@@ -80,14 +72,22 @@ const Dashboard = () => {
             />
           ))}
 
-<div className="pt-4 text-right">
-            <Link
-              to="/dashboard2"
-              onClick={handleSubmit}
-              className="px-6 py-2 rounded-full text-white bg-gradient-to-r from-blue-500 to-purple-500 inline-block"
+          <div className="pt-4 text-right">
+            <button
+              type="submit"
+              className="px-6 py-2 rounded-full text-white bg-gradient-to-r from-blue-500 to-purple-500"
             >
-              Next
-            </Link>
+              Test
+            </button>
+          </div>
+
+          <div className="pt-2 text-center">
+            <button
+              type="button"
+              className="w-full px-6 py-2 rounded-full text-2xl bg-gray-300"
+            >
+              Result
+            </button>
           </div>
         </form>
       </div>
@@ -95,4 +95,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default Dashboard2;
