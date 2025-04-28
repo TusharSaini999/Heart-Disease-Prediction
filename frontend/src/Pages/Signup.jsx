@@ -28,17 +28,17 @@ const Signup = () => {
     const newErrors = {};
     const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 
-    // Validate email
+    
     if (!emailPattern.test(formData.email)) {
       newErrors.email = "Please enter a valid email address.";
     }
 
-    // Validate password match
+ 
     if (formData.password !== formData.confirmPassword) {
       newErrors.password = "Passwords do not match.";
     }
 
-    // Validate mobile number (max length 10)
+  
     if (formData.mobile.length > 10) {
       newErrors.mobile = "Mobile number cannot exceed 10 digits.";
     }
@@ -51,7 +51,7 @@ const Signup = () => {
 
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length === 0) {
-      // No validation errors, proceed to navigation
+      
       navigate("/login2");
     } else {
       setErrors(validationErrors);
@@ -88,7 +88,7 @@ const Signup = () => {
             className="w-full mb-2 px-3 py-2 border rounded-lg"
             required
           />
-          {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>} {/* Email validation error */}
+          {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>} 
 
           <select
             name="gender"
@@ -110,7 +110,7 @@ const Signup = () => {
             className="w-full mb-2 px-3 py-2 border rounded-lg"
             required
           />
-          {errors.mobile && <p className="text-red-500 text-sm">{errors.mobile}</p>} {/* Mobile validation error */}
+          {errors.mobile && <p className="text-red-500 text-sm">{errors.mobile}</p>}
 
           <input
             type="date"
@@ -138,7 +138,7 @@ const Signup = () => {
             className="w-full mb-4 px-3 py-2 border rounded-lg"
             required
           />
-          {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>} {/* Password match error */}
+          {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>} 
 
           <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded-lg">
             Sign Up
