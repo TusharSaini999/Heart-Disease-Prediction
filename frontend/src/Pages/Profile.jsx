@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import Modal from "react-modal";
 import { Link } from "react-router-dom";
+Modal.setAppElement("#root");
 
 
 

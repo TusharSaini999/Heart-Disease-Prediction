@@ -7,6 +7,7 @@ import Dashboard from "./Pages/Dashboard";
 import Dashboard2 from "./Pages/Dashboard2";
 import History from "./Pages/History";
 import Profile from "./Pages/Profile";
+import Health from "./Pages/Health"
 function App() {
   return (
     
@@ -19,6 +20,7 @@ function App() {
         <Route path="/dashboard2" element={<Dashboard2/>}/>
         <Route path="/history" element={<History/>}/>
         <Route path="/profile" element={<Profile/>}/>
+        <Route path="/health" element={<Health/>}/>
       </Routes>
     
   

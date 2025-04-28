@@ -11,10 +11,10 @@ The **Heart Disease Prediction** web application is an AI/ML-based solution desi
 - 📱 **Responsive UI:** Optimized for desktop and mobile devices.
 
 ## 🛠 Tech Stack
-- 🏗 **Frontend:** HTML, CSS, JavaScript, React.js
-- 🚀 **Backend:** Express.js
+- 🏗 **Frontend:** React.js (with Vite), HTML, CSS, JavaScript
+- 🚀 **Backend:** Express.js (Node.js)
 - 🗄 **Database:** MySQL
-- 🤖 **AI/ML:** 
+- 🤖 **AI/ML:** TensorFlow.js
 - ☁ **Deployment:** Hosted on Render
 
 ## 📝 Usage
