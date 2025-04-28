@@ -4,6 +4,8 @@ const axios = require("axios");
 const db = require("./db");
 require('dotenv').config();
 const verifyToken = require("./verifyToken");
+const Groq = require('groq-sdk');
+
 ///curl -X POST "http://localhost:4000/ai" -H "Content-Type: application/json" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoiam9obmRvZUBleGFtcGxlLmNvbSIsImlhdCI6MTc0MjQ2NDU4OSwiZXhwIjoxNzQzMDY5Mzg5fQ.NDuh8OVqV4kM6woCC8BrzXE40T7rdVBLLauGNyyoOLY" -d "{\"features\": [81, 0, 3, 107, 297, 1, 1, 179, 1, 1.194321572, 2, 2, 0]}"
 ///{"predicted_class":0}
 
@@ -25,17 +27,17 @@ router.post("/", verifyToken, async (req, res) => {
         const { features } = req.body;
         const uid = req.user.userId;
 
-        
+
         if (!features || !Array.isArray(features)) {
             return res.status(400).json({ error: "Invalid input format. 'features' must be an array." });
         }
 
-    
+
         if (features.length !== 13) {
             return res.status(400).json({ error: "Invalid input. 'features' array must contain exactly 13 values." });
         }
 
-        
+
         const constraints = [
             { min: 20, max: 90 },     // Age
             { min: 0, max: 1 },       // Sex
@@ -52,7 +54,7 @@ router.post("/", verifyToken, async (req, res) => {
             { min: 1, max: 3 }        // Thalassemia Test Result (thal)
         ];
 
-    
+
         for (let i = 0; i < features.length; i++) {
             if (typeof features[i] !== "number" || features[i] < constraints[i].min || features[i] > constraints[i].max) {
                 return res.status(400).json({
@@ -61,7 +63,7 @@ router.post("/", verifyToken, async (req, res) => {
             }
         }
 
-        
+
         const aiResponse = await axios.post(process.env.PYTHON_HOST, { features });
         const target_multi = aiResponse.data.predicted_class; // Extract prediction
 
@@ -91,7 +93,7 @@ router.post("/", verifyToken, async (req, res) => {
 
 router.get("/histery", verifyToken, async (req, res) => {
     try {
-        const uid = req.user?.userId; 
+        const uid = req.user?.userId;
 
         if (!uid) {
             return res.status(401).json({ error: "Unauthorized: User ID missing in token" });
@@ -110,6 +112,138 @@ router.get("/histery", verifyToken, async (req, res) => {
         res.status(500).json({ error: "Server error", details: error.message });
     }
 });
+
+/*{
+    "age": 35,                        // Number (must be > 0 and <= 120)
+    "gender": "Male",                 // String: "Male", "Female", or "Other"
+    "exerciseFrequency": "1-2",       // String: "0", "1-2", "3-5", "5+"
+    "smoke": false,                   // Boolean: true or false
+    "fastFoodFrequency": "Often",     // String: "Rarely", "Sometimes", "Often"
+    "stressLevel": "High",            // String: "Low", "Moderate", "High"
+    "sleepHours": "5-7",              // String: "<5", "5-7", "7-9", ">9"
+    "familyHistory": "Yes",           // String: "Yes", "No", "Not Sure"
+    "chestPain": true,                // Boolean: true or false
+    "bloodPressureOrDiabetes": "Yes"  // String: "Yes", "No", "Not Sure"
+  }
+  */
+//Yes
+//curl -X POST http://localhost:4000/ai/predict-heart-disease -H "Content-Type: application/json" -d "{\"age\": 45, \"gender\": \"Male\", \"exerciseFrequency\": \"3-5\", \"smoke\": true, \"fastFoodFrequency\": \"Often\", \"stressLevel\": \"High\", \"sleepHours\": \"5-7\", \"familyHistory\": \"Yes\", \"chestPain\": true, \"bloodPressureOrDiabetes\": \"Yes\"}"
+//NO
+//curl -X POST http://localhost:4000/ai/predict-heart-disease -H "Content-Type: application/json" -d "{\"age\": 45, \"gender\": \"Male\", \"exerciseFrequency\": \"3-5\", \"smoke\": false, \"fastFoodFrequency\": \"Rarely\", \"stressLevel\": \"Low\", \"sleepHours\": \"7-9\", \"familyHistory\": \"No\", \"chestPain\": false, \"bloodPressureOrDiabetes\": \"No\"}"
+
+
+const groq = new Groq({ apiKey: process.env.GROQ_API });
+
+
+router.post('/predict-heart-disease', async (req, res) => {
+    try {
+        const {
+            age,
+            gender,
+            exerciseFrequency,
+            smoke,
+            fastFoodFrequency,
+            stressLevel,
+            sleepHours,
+            familyHistory,
+            chestPain,
+            bloodPressureOrDiabetes
+        } = req.body;
+
+        // Convert smoke and chestPain to booleans if they are received as strings
+        const booleanSmoke = typeof smoke === 'string' ? smoke === 'true' : smoke;
+        const booleanChestPain = typeof chestPain === 'string' ? chestPain === 'true' : chestPain;
+
+        // Basic Validation
+        if (!age || age <= 0 || age > 120) {
+            return res.status(400).json({ error: "Invalid age" });
+        }
+        if (!gender || !['Male', 'Female', 'Other'].includes(gender)) {
+            return res.status(400).json({ error: "Invalid gender" });
+        }
+        if (!exerciseFrequency || !['0', '1-2', '3-5', '5+'].includes(exerciseFrequency)) {
+            return res.status(400).json({ error: "Invalid exercise frequency" });
+        }
+        if (typeof booleanSmoke !== 'boolean') {
+            return res.status(400).json({ error: "Invalid smoke value" });
+        }
+        if (!fastFoodFrequency || !['Rarely', 'Sometimes', 'Often'].includes(fastFoodFrequency)) {
+            return res.status(400).json({ error: "Invalid fast food frequency" });
+        }
+        if (!stressLevel || !['Low', 'Moderate', 'High'].includes(stressLevel)) {
+            return res.status(400).json({ error: "Invalid stress level" });
+        }
+        if (!sleepHours || !['<5', '5-7', '7-9', '>9'].includes(sleepHours)) {
+            return res.status(400).json({ error: "Invalid sleep hours" });
+        }
+        if (!familyHistory || !['Yes', 'No', 'Not Sure'].includes(familyHistory)) {
+            return res.status(400).json({ error: "Invalid family history" });
+        }
+        if (typeof booleanChestPain !== 'boolean') {
+            return res.status(400).json({ error: "Invalid chest pain value" });
+        }
+        if (!bloodPressureOrDiabetes || !['Yes', 'No', 'Not Sure'].includes(bloodPressureOrDiabetes)) {
+            return res.status(400).json({ error: "Invalid blood pressure/diabetes value" });
+        }
+        const prompt = `
+        You are a medical assistant. Based on the following user's lifestyle and health data, predict if they are at risk of heart disease.
+        
+        If they are at risk, suggest the most likely type of heart disease from these: 
+        - Coronary Artery Disease
+        - Heart Failure
+        - Arrhythmia
+        - Heart Valve Disease
+        - Cardiomyopathy
+        
+        Respond in this exact JSON format:
+        {
+          "atRisk": "Yes" or "No",
+          "possibleDiseases": ["disease1", "disease2"] or []
+        }
+        
+        User Data:
+        Age: ${age}
+        Gender: ${gender}
+        Exercise Frequency: ${exerciseFrequency}
+        Smoke: ${booleanSmoke ? 'Yes' : 'No'}
+        Fast Food Consumption: ${fastFoodFrequency}
+        Stress Level: ${stressLevel}
+        Sleep Hours: ${sleepHours}
+        Family History of Heart Disease: ${familyHistory}
+        Chest Pain or Discomfort: ${booleanChestPain ? 'Yes' : 'No'}
+        High Blood Pressure or Diabetes: ${bloodPressureOrDiabetes}
+        `;
+
+        const completion = await groq.chat.completions.create({
+            model: "llama-3.3-70b-versatile", 
+            messages: [
+                { role: "system", content: "You are a heart disease prediction assistant." },
+                { role: "user", content: prompt }
+            ]
+        });
+
+        
+        const llmResult = completion.choices[0]?.message?.content?.trim();
+        if (!llmResult) {
+            return res.status(500).json({ error: "No result from the model" });
+        }
+        const cleanResult = llmResult.replace(/`/g, '');
+
+        try {
+            const prediction = JSON.parse(cleanResult);
+
+            res.json({ prediction });
+        } catch (parseError) {
+            return res.status(500).json({ error: "Failed to parse model response" });
+        }
+
+    } catch (error) {
+        console.error(error.response ? error.response.data : error.message);
+        res.status(500).json({ error: "Something went wrong." });
+    }
+});
+
+
 
 
 module.exports = router;
