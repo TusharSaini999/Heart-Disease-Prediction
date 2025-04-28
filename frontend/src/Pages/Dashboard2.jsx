@@ -18,7 +18,7 @@ const Dashboard2 = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Form submitted", formData);
-    // Handle result generation logic here
+   
   };
 
   return (
@@ -30,7 +30,7 @@ const Dashboard2 = () => {
       }}
     >
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full max-w-6xl bg-white bg-opacity-90 rounded-xl p-8">
-        {/* Left Section */}
+     
         <div className="space-y-6">
           <h1 className="text-4xl font-bold">
             <span className="text-red-600">❤️ Heart</span> Disease Prediction
@@ -52,7 +52,7 @@ const Dashboard2 = () => {
           </div>
         </div>
 
-        {/* Right Form Section */}
+       
         <form
           onSubmit={handleSubmit}
           className="bg-gray-100 rounded-xl p-8 space-y-4 shadow"

@@ -150,6 +150,10 @@ router.post('/predict-heart-disease', async (req, res) => {
             bloodPressureOrDiabetes
         } = req.body;
 
+        // Convert smoke and chestPain to booleans if they are received as strings
+        const booleanSmoke = typeof smoke === 'string' ? smoke === 'true' : smoke;
+        const booleanChestPain = typeof chestPain === 'string' ? chestPain === 'true' : chestPain;
+
         // Basic Validation
         if (!age || age <= 0 || age > 120) {
             return res.status(400).json({ error: "Invalid age" });
@@ -160,7 +164,7 @@ router.post('/predict-heart-disease', async (req, res) => {
         if (!exerciseFrequency || !['0', '1-2', '3-5', '5+'].includes(exerciseFrequency)) {
             return res.status(400).json({ error: "Invalid exercise frequency" });
         }
-        if (typeof smoke !== 'boolean') {
+        if (typeof booleanSmoke !== 'boolean') {
             return res.status(400).json({ error: "Invalid smoke value" });
         }
         if (!fastFoodFrequency || !['Rarely', 'Sometimes', 'Often'].includes(fastFoodFrequency)) {
@@ -175,69 +179,71 @@ router.post('/predict-heart-disease', async (req, res) => {
         if (!familyHistory || !['Yes', 'No', 'Not Sure'].includes(familyHistory)) {
             return res.status(400).json({ error: "Invalid family history" });
         }
-        if (typeof chestPain !== 'boolean') {
+        if (typeof booleanChestPain !== 'boolean') {
             return res.status(400).json({ error: "Invalid chest pain value" });
         }
         if (!bloodPressureOrDiabetes || !['Yes', 'No', 'Not Sure'].includes(bloodPressureOrDiabetes)) {
             return res.status(400).json({ error: "Invalid blood pressure/diabetes value" });
         }
-
-        // Create a prompt to send to the LLM model (Groq)
         const prompt = `
-  You are a medical assistant. Based on the following user's lifestyle and health data, predict if they are at risk of heart disease.
-  
-  If they are at risk, suggest the most likely type of heart disease from these: 
-  - Coronary Artery Disease
-  - Heart Failure
-  - Arrhythmia
-  - Heart Valve Disease
-  - Cardiomyopathy
-  
-  Respond in this exact JSON format:
-  {
-    "atRisk": "Yes" or "No",
-    "possibleDiseases": ["disease1", "disease2"] or []
-  }
-  
-  User Data:
-  Age: ${age}
-  Gender: ${gender}
-  Exercise Frequency: ${exerciseFrequency}
-  Smoke: ${smoke ? 'Yes' : 'No'}
-  Fast Food Consumption: ${fastFoodFrequency}
-  Stress Level: ${stressLevel}
-  Sleep Hours: ${sleepHours}
-  Family History of Heart Disease: ${familyHistory}
-  Chest Pain or Discomfort: ${chestPain ? 'Yes' : 'No'}
-  High Blood Pressure or Diabetes: ${bloodPressureOrDiabetes}
-  `;
+        You are a medical assistant. Based on the following user's lifestyle and health data, predict if they are at risk of heart disease.
+        
+        If they are at risk, suggest the most likely type of heart disease from these: 
+        - Coronary Artery Disease
+        - Heart Failure
+        - Arrhythmia
+        - Heart Valve Disease
+        - Cardiomyopathy
+        
+        Respond in this exact JSON format:
+        {
+          "atRisk": "Yes" or "No",
+          "possibleDiseases": ["disease1", "disease2"] or []
+        }
+        
+        User Data:
+        Age: ${age}
+        Gender: ${gender}
+        Exercise Frequency: ${exerciseFrequency}
+        Smoke: ${booleanSmoke ? 'Yes' : 'No'}
+        Fast Food Consumption: ${fastFoodFrequency}
+        Stress Level: ${stressLevel}
+        Sleep Hours: ${sleepHours}
+        Family History of Heart Disease: ${familyHistory}
+        Chest Pain or Discomfort: ${booleanChestPain ? 'Yes' : 'No'}
+        High Blood Pressure or Diabetes: ${bloodPressureOrDiabetes}
+        `;
 
-        // Call Groq API for heart disease prediction
         const completion = await groq.chat.completions.create({
-            model: "llama-3.3-70b-versatile",  // Use the Llama model here
+            model: "llama-3.3-70b-versatile", 
             messages: [
                 { role: "system", content: "You are a heart disease prediction assistant." },
                 { role: "user", content: prompt }
             ]
         });
 
-        // Get the prediction result from Groq response
+        
         const llmResult = completion.choices[0]?.message?.content?.trim();
-
         if (!llmResult) {
             return res.status(500).json({ error: "No result from the model" });
         }
+        const cleanResult = llmResult.replace(/`/g, '');
 
-        // Attempt to parse the LLM result into JSON format
-        const prediction = JSON.parse(llmResult);
+        try {
+            const prediction = JSON.parse(cleanResult);
 
-        res.json({ prediction });
+            res.json({ prediction });
+        } catch (parseError) {
+            return res.status(500).json({ error: "Failed to parse model response" });
+        }
 
     } catch (error) {
         console.error(error.response ? error.response.data : error.message);
         res.status(500).json({ error: "Something went wrong." });
     }
 });
+
+
 
 
 module.exports = router;

@@ -34,6 +34,12 @@ function Landing2({ user }){
         <Link to="/dashboard" className="bg-gradient-to-r from-indigo-500 to-pink-500 text-white text-base px-6 py-3 rounded-full shadow-md hover:shadow-lg transition-all">
           Predict Heart Disease
         </Link>
+        <br />
+        <br />
+        <Link to="/health" className="bg-gradient-to-r from-indigo-500 to-pink-500 text-white text-base px-6 py-3 rounded-full shadow-md hover:shadow-lg transition-all">
+        Check My Health
+        </Link>
+        
       </div>
       <div className="md:w-1/2 flex justify-center p-4">
         <img
@@ -44,7 +50,6 @@ function Landing2({ user }){
       </div>
     </div>
 
-    {/* Required Medical Reports Section */}
     <div className="bg-white py-12 px-4 md:px-16">
       <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
         <span role="img" aria-label="pencil">📝</span> Required <span className="text-green-600">Medical</span> Reports
