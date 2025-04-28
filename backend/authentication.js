@@ -8,7 +8,7 @@ const multer = require("multer");
 const sharp = require("sharp"); // Image processing library
 
 const router = express.Router();
-///curl -X POST "http://localhost:4000/auth/signup" -H "Content-Type: application/json" -d "{\"name\":\"John Doe\",\"email\":\"johndoe@esamle.com\",\"mobile_no\":\"9877548210\",\"dob\":\"2000-05-15\",\"gender\":1,\"password\":\"12345578\"}"
+///curl -X POST "http://localhost:4000/auth/signup" -H "Content-Type: application/json" -d "{\"name\":\"John Doe\",\"email\":\"tushar@gmail.com\",\"mobile_no\":\"9877546210\",\"dob\":\"2000-05-15\",\"gender\":1,\"password\":\"12345578\"}"
 router.post("/signup", async (req, res) => {
   try {
     const { name, email, mobile_no, dob, gender, password } = req.body;
@@ -27,6 +27,11 @@ router.post("/signup", async (req, res) => {
 
     if (password.length < 8) {
       return res.status(400).json({ error: "Password must be at least 8 characters long!" });
+    }
+
+    const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+    if (!gmailRegex.test(email)) {
+      return res.status(400).json({ error: "Only valid Gmail addresses are allowed!" });
     }
 
     db.query("SELECT * FROM users WHERE email = ?", [email], async (err, emailResults) => {
@@ -69,6 +74,7 @@ router.post("/signup", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
 
 //curl -X POST "http://localhost:4000/auth/login" -H "Content-Type: application/json" -d "{\"email\":\"johndoe@example.com\",\"password\":\"12345678\"}"
 
