@@ -34,6 +34,11 @@ function Landing2({ user }){
         <Link to="/dashboard" className="bg-gradient-to-r from-indigo-500 to-pink-500 text-white text-base px-6 py-3 rounded-full shadow-md hover:shadow-lg transition-all">
           Predict Heart Disease
         </Link>
+        <br />
+        <br />
+        <Link to="/health" className=" bg-gradient-to-r from-indigo-900 to-red-500 text-white text-base px-6 py-3 rounded-full shadow-md hover:shadow-lg transition-all">
+          Health
+        </Link>
       </div>
       <div className="md:w-1/2 flex justify-center p-4">
         <img
