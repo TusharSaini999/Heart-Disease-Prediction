@@ -1,13 +1,14 @@
 import json
 import joblib
 import numpy as np
+import os
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 # Load model and scaler
 model = joblib.load("heart_disease_model.pkl")
 scaler = joblib.load("scaler.pkl")
 
-# Define your secret API key
+# API key
 API_KEY = "dcxfsdfcwqwas324566rfdswed56dsa"
 
 class RequestHandler(BaseHTTPRequestHandler):
@@ -16,12 +17,14 @@ class RequestHandler(BaseHTTPRequestHandler):
         self.send_header("Content-type", "application/json")
         self.end_headers()
 
+    def do_HEAD(self):
+        self._set_headers(200)
+
     def do_POST(self):
         if self.path == "/predict":
             content_length = int(self.headers.get("Content-Length", 0))
             post_data = self.rfile.read(content_length)
 
-            # Check for API key in headers
             auth_header = self.headers.get("Authorization")
             if not auth_header or auth_header != f"Bearer {API_KEY}":
                 self._set_headers(401)
@@ -51,8 +54,8 @@ class RequestHandler(BaseHTTPRequestHandler):
                 self._set_headers(500)
                 self.wfile.write(json.dumps({"error": str(e)}).encode())
 
-# Start the server
-PORT = 8000
-server = HTTPServer(("localhost", PORT), RequestHandler)
-print(f"Server running on http://localhost:{PORT}")
+# Use PORT from environment for Render
+PORT = int(os.environ.get("PORT", 8000))
+server = HTTPServer(("0.0.0.0", PORT), RequestHandler)
+print(f"Server running on http://0.0.0.0:{PORT}")
 server.serve_forever()
