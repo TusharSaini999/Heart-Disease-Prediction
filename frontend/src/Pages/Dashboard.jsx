@@ -6,6 +6,27 @@ export default function HeartDiseaseForm() {
     age: '', sex: '', cp: '', trestbps: '', chol: '', fbs: '', restecg: '',
     thalach: '', exang: '', oldpeak: '', slope: '', ca: '', thal: '', target_multi: ''
   });
+  const [prediction, setPrediction] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  // const [formData, setFormData] = useState({
+  //   age: '63',               // Valid range: 20–90
+  //   sex: '1',                // 0 = Female, 1 = Male
+  //   cp: '2',                 // Chest Pain Type (0–3)
+  //   trestbps: '145',         // Resting BP (80–200)
+  //   chol: '233',             // Cholesterol (100–500)
+  //   fbs: '1',                // Fasting Blood Sugar (0 = Normal, 1 = High)
+  //   restecg: '0',            // Resting ECG (0–2)
+  //   thalach: '150',          // Max Heart Rate (60–220)
+  //   exang: '1',              // Exercise-Induced Angina (0 = No, 1 = Yes)
+  //   oldpeak: '2.3',          // ST Depression (0.0–6.0)
+  //   slope: '2',              // ST Segment Slope (0–2)
+  //   ca: '3',                 // Major Vessels (0–3)
+  //   thal: '3',               // Thalassemia (1–3)
+  //   target_multi: '4'        // Heart Disease Type (0–4)
+  // });
+  
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -14,9 +35,12 @@ export default function HeartDiseaseForm() {
    
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    navigate("/history");
+    setLoading(true);
+    setPrediction(null);
+    setError(null);
+  
     const parsedData = {
       age: Number(formData.age),
       sex: Number(formData.sex),
@@ -27,15 +51,41 @@ export default function HeartDiseaseForm() {
       restecg: Number(formData.restecg),
       thalach: Number(formData.thalach),
       exang: Number(formData.exang),
-      oldpeak: Number(formData.oldpeak),
+      oldpeak: parseFloat(formData.oldpeak),
       slope: Number(formData.slope),
       ca: Number(formData.ca),
       thal: Number(formData.thal),
       target_multi: Number(formData.target_multi),
     };
-    console.log('Validated Form Data:', parsedData);
-    
+  
+    const token = localStorage.getItem("token");
+    const featuresArray = Object.values(parsedData).slice(0, 13); // Exclude target_multi
+  
+    try {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/ai`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ features: featuresArray })
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        setPrediction(data.predicted_class);
+      } else {
+        setError(data.error || 'Prediction failed.');
+      }
+    } catch (err) {
+      setError('A network error occurred while submitting the form.');
+    } finally {
+      setLoading(false);
+    }
   };
+  
+  
 
   return (
     <div className="min-h-screen bg-cover bg-center" style={{ backgroundImage: 'url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRy7_gEjLSEKrA2n9Mt58ZjQF_xT-Fz5yi7FA&s")' }}>
@@ -158,6 +208,24 @@ export default function HeartDiseaseForm() {
           </button>
         </div>
       </form>
+
+      {loading && (
+        <div className="col-span-2 text-center mt-4 text-blue-700 font-semibold">
+          🔄 Predicting, please wait...
+        </div>
+      )}
+
+      {prediction !== null && (
+        <div className="col-span-2 mt-4 text-center bg-green-100 text-green-800 px-4 py-3 rounded shadow">
+          ✅ Predicted Heart Disease Type: <strong>{prediction}</strong>
+        </div>
+      )}
+
+      {error && (
+        <div className="col-span-2 mt-4 text-center bg-red-100 text-red-800 px-4 py-3 rounded shadow">
+          ❌ {error}
+        </div>
+      )}
     </div>
   );
 }

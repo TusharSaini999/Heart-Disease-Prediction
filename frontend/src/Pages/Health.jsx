@@ -61,7 +61,7 @@ const Health = () => {
       setLoading(true);
       setApiResponse(null);
       try {
-        const response = await axios.post('http://localhost:4000/ai/predict-heart-disease', formData);
+        const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/ai/predict-heart-disease`, formData);
         setApiResponse(response.data);
       } catch (error) {
         console.error('Error submitting form:', error.response ? error.response.data : error.message);
