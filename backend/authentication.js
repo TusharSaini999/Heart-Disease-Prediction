@@ -8,7 +8,7 @@ const multer = require("multer");
 const sharp = require("sharp"); // Image processing library
 
 const router = express.Router();
-///curl -X POST "http://localhost:4000/auth/signup" -H "Content-Type: application/json" -d "{\"name\":\"John Doe\",\"email\":\"tushar@gmail.com\",\"mobile_no\":\"9877546210\",\"dob\":\"2000-05-15\",\"gender\":1,\"password\":\"12345578\"}"
+///curl -X POST "http://localhost:4000/auth/signup" -H "Content-Type: application/json" -d "{\"name\":\"John Doe\",\"email\":\"tusharg@gmail.com\",\"mobile_no\":\"9874546210\",\"dob\":\"2000-05-15\",\"gender\":1,\"password\":\"12345578\"}"
 router.post("/signup", async (req, res) => {
   try {
     const { name, email, mobile_no, dob, gender, password } = req.body;
@@ -76,7 +76,7 @@ router.post("/signup", async (req, res) => {
 });
 
 
-//curl -X POST "http://localhost:4000/auth/login" -H "Content-Type: application/json" -d "{\"email\":\"johndoe@example.com\",\"password\":\"12345678\"}"
+//curl -X POST "http://localhost:4000/auth/login" -H "Content-Type: application/json" -d "{\"email\":\"tushar@gmail.com\",\"password\":\"12345678\"}"
 
 
 // Login API 

@@ -3,49 +3,55 @@ import joblib
 import numpy as np
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
-#create a Api for Express js
+# Load model and scaler
 model = joblib.load("heart_disease_model.pkl")
 scaler = joblib.load("scaler.pkl")
 
+# Define your secret API key
+API_KEY = "dcxfsdfcwqwas324566rfdswed56dsa"
+
 class RequestHandler(BaseHTTPRequestHandler):
+    def _set_headers(self, status_code=200):
+        self.send_response(status_code)
+        self.send_header("Content-type", "application/json")
+        self.end_headers()
+
     def do_POST(self):
         if self.path == "/predict":
-            
-            content_length = int(self.headers["Content-Length"])
+            content_length = int(self.headers.get("Content-Length", 0))
             post_data = self.rfile.read(content_length)
-            
+
+            # Check for API key in headers
+            auth_header = self.headers.get("Authorization")
+            if not auth_header or auth_header != f"Bearer {API_KEY}":
+                self._set_headers(401)
+                self.wfile.write(json.dumps({"error": "Unauthorized"}).encode())
+                return
+
             try:
-                
                 input_data = json.loads(post_data)
                 features = input_data.get("features", [])
 
-                if not isinstance(features, list) or len(features) == 0:
-                    self.send_response(400)
-                    self.send_header("Content-type", "application/json")
-                    self.end_headers()
-                    self.wfile.write(json.dumps({"error": "Invalid input"}).encode())
+                if not isinstance(features, list) or len(features) != 13:
+                    self._set_headers(400)
+                    self.wfile.write(json.dumps({
+                        "error": "Invalid input. 'features' must be an array of 13 numeric values."
+                    }).encode())
                     return
-                
-                
-                features_scaled = scaler.transform([features])
 
-                
+                features_scaled = scaler.transform([features])
                 prediction = model.predict(features_scaled)[0]
 
-                
-                self.send_response(200)
-                self.send_header("Content-type", "application/json")
-                self.end_headers()
-                response = {"predicted_class": int(prediction)}
-                self.wfile.write(json.dumps(response).encode())
+                self._set_headers(200)
+                self.wfile.write(json.dumps({
+                    "predicted_class": int(prediction)
+                }).encode())
 
             except Exception as e:
-                self.send_response(500)
-                self.send_header("Content-type", "application/json")
-                self.end_headers()
+                self._set_headers(500)
                 self.wfile.write(json.dumps({"error": str(e)}).encode())
 
-
+# Start the server
 PORT = 8000
 server = HTTPServer(("localhost", PORT), RequestHandler)
 print(f"Server running on http://localhost:{PORT}")
