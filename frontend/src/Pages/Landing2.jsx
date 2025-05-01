@@ -1,9 +1,15 @@
 import React from "react";
-import { Link } from "react-router-dom";
-
+import { Link, useNavigate } from "react-router-dom";
 
 
 function Landing2({ user }){
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // Clear auth token
+    navigate("/login"); // Redirect to login page
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 font-sans">
     
@@ -14,11 +20,13 @@ function Landing2({ user }){
         </div>
       </div>
       <div className="flex space-x-8 text-gray-500 font-medium">
-        <Link to="/Login2" className="text-blue-600">Home</Link>
+        <Link to="/landing2" className="text-blue-600">Home</Link>
         <Link to="/profile">Profile</Link>
         <Link to="/history">History</Link>
       </div>
-      <button className="bg-gradient-to-r from-red-400 to-red-600 text-white px-4 py-2 rounded-full font-medium shadow">
+      <button
+       onClick={handleLogout}
+      className="bg-gradient-to-r from-red-400 to-red-600 text-white px-4 py-2 rounded-full font-medium shadow">
         Logout
       </button>
     </div>

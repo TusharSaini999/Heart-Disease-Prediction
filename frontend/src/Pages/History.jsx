@@ -7,15 +7,30 @@ const History = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://localhost:4000/ai/histery");
-        setRecords(response.data);
+        const token = localStorage.getItem("token");
+  
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/ai/histery`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+  
+        const result = await response.json();
+  
+        if (!response.ok) {
+          throw new Error(result.error || "Failed to fetch records");
+        }
+  
+        setRecords(result.data || []); // Use `result.data` since your backend returns `{ success: true, data: [...] }`
       } catch (error) {
-        console.error("Failed to fetch records:", error);
+        console.error("Failed to fetch records:", error.message);
       }
     };
-
+  
     fetchData();
   }, []);
+  
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">

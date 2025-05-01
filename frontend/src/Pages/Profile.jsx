@@ -4,10 +4,7 @@ import Modal from "react-modal";
 import { Link } from "react-router-dom";
 Modal.setAppElement("#root");
 
-
-
 function Profile() {
-  const [profileData, setProfileData] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({});
   const [password, setPassword] = useState("");
@@ -16,22 +13,31 @@ function Profile() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
-  const [userType, setUserType] = useState("");
 
   const token = localStorage.getItem("token");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(
-          " /*random api*/ ",
-          {
-            headers: { Authorization: token },
-          }
-        );
-        setProfileData(response.data);
-        setFormData(response.data);
-        setUserType(response.data.userType);
+        const response = await fetch(import.meta.env.VITE_BACKEND_URL + "/auth/profile", {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+  
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || "Failed to fetch");
+  
+        const user = data.profile;
+        setFormData({
+          name: user.name,
+          email: user.email,
+          phone: user.mobile_no,
+          dob: user.dob,
+          gender: user.gender === "Male" ? 1 : 0,
+          image: user.profile_photo,
+        });
         setLoading(false);
       } catch (err) {
         console.error("Error fetching profile data:", err.message);
@@ -39,13 +45,13 @@ function Profile() {
         setLoading(false);
       }
     };
-
+  
     if (token) fetchData();
     else {
       setError("No token found. Please log in.");
       setLoading(false);
     }
-  }, [token]);
+  }, [token]);  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -58,43 +64,53 @@ function Profile() {
       return;
     }
 
+    
     try {
       const formDataObj = new FormData();
-      formDataObj.append("id", profileData.id);
+      
+      const isoDate = formData.dob;
+      const formattedDate = isoDate.split("T")[0]; // "2000-05-15"
+      
       formDataObj.append("name", formData.name);
-      formDataObj.append("phone", formData.phone);
-      formDataObj.append("address", formData.address);
-      formDataObj.append("currentPassword", password);
-      formDataObj.append("userType", userType);
-
+      formDataObj.append("mobile_no", formData.phone);
+      formDataObj.append("dob", formattedDate);
+      formDataObj.append("gender", formData.gender); // 0 for Female, 1 for Male
+      formDataObj.append("password", password);
+  
       if (selectedImage) {
         formDataObj.append("image", selectedImage);
       }
-
+  
       setLoading(true);
-      await axios.put(
-        "https://campuseats-ki1c.onrender.com/users/profile-update",
-        formDataObj,
-        {
-          headers: {
-            Authorization: token,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+  
+      // for (let pair of formDataObj.entries()) {
+      //   console.log(pair[0] + ': ' + pair[1]);
+      // }
+      // console.log("Token: ", token);
 
-      setProfileData((prev) => ({ ...prev, ...formData }));
+      const response = await fetch(import.meta.env.VITE_BACKEND_URL + "/auth/update-profile", {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formDataObj,
+      });
+  
+      const result = await response.json();
+  
+      if (!response.ok) throw new Error(result.error || "Update failed");
       setIsEditing(false);
       setPassword("");
       openModal("Profile updated successfully!");
-      setLoading(false);
     } catch (err) {
       console.error("Error saving profile data:", err.message);
       openModal("Failed to update profile. Please check your password and try again.");
       setPassword("");
+    } finally {
       setLoading(false);
     }
   };
+  
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -214,15 +230,6 @@ function Profile() {
           {formData.name || "N/A"}
         </h2>
         <p className="text-gray-500 mb-6">{formData.email || "N/A"}</p>
-
-        {userType !== "vendor" && userType !== "delivery_boy" && (
-          <Link
-            to="/order-history"
-            className="w-3/4 text-center bg-blue-600 hover:bg-blue-500 text-white py-2 rounded-lg shadow-md"
-          >
-            Orders
-          </Link>
-        )}
       </aside>
 
       {/* Main Content */}
@@ -280,18 +287,6 @@ function Profile() {
                 type="tel"
                 name="phone"
                 value={formData.phone || ""}
-                onChange={handleChange}
-                disabled={!isEditing}
-                className={`w-full border rounded-md px-3 py-2 text-gray-800 focus:outline-none ${!isEditing ? "bg-gray-100" : ""}`}
-              />
-            </div>
-
-            <div>
-              <label className="block text-gray-600 text-sm mb-1">Address</label>
-              <input
-                type="text"
-                name="address"
-                value={formData.address || ""}
                 onChange={handleChange}
                 disabled={!isEditing}
                 className={`w-full border rounded-md px-3 py-2 text-gray-800 focus:outline-none ${!isEditing ? "bg-gray-100" : ""}`}
