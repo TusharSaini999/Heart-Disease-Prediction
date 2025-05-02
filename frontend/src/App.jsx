@@ -7,7 +7,7 @@ import Dashboard from "./Pages/Dashboard";
 import History from "./Pages/History";
 import Profile from "./Pages/Profile";
 import Health from "./Pages/Health";
-import ProtectedRoute from "./Components/ProtectedRoute";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
