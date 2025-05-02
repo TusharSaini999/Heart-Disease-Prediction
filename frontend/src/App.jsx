@@ -1,10 +1,13 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Landingpage from "./Pages/Landingpage";
+import Loginpage from "./Pages/Loginpage";  
+import Signup from "./Pages/Signup";
 import Landing2 from "./Pages/Landing2"
 import Dashboard from "./Pages/Dashboard";
 import History from "./Pages/History";
 import Profile from "./Pages/Profile";
 import Health from "./Pages/Health";
-import ProtectedRoute from "./components/ProtectedRoute";
+import ProtectedRoute from "./Components/ProtectedRoute";
 
 function App() {
   return (
