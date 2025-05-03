@@ -2,7 +2,7 @@ import { HiMiniBars3BottomRight } from "react-icons/hi2";
 import { useState, useEffect, useRef } from "react";
 import { IoMdClose } from "react-icons/io";
 import { Link as ScrollLink } from 'react-scroll';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { Link as RouterLink, useNavigate ,useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Navbar() {
@@ -12,10 +12,12 @@ export default function Navbar() {
   const [isLoading, setIsLoading] = useState(true);
   const menuRef = useRef(null);
   const navigate = useNavigate();
+  const location = useLocation(); 
+  const isHomePage = location.pathname === '/';
+  console.log(isHomePage)
 
   const handleCloseMenu = () => setIsOpen(false);
 
-  // Detect click outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -32,40 +34,39 @@ export default function Navbar() {
     };
   }, [isOpen]);
 
-  // Function to handle active link
+  
   const handleLinkClick = (link) => {
     setActiveLink(link);
-    setIsOpen(false); // Close the mobile menu on link click
+    setIsOpen(false); 
   };
 
   const handleLinkClicks = (link) => {
     setActiveLinks(link);
-    setIsOpen(false); // Close the mobile menu on link click
+    setIsOpen(false); 
   };
 
-  // Check if user is logged in (by token) and set the loading state
   useEffect(() => {
-    const token = localStorage.getItem('token'); // assuming token is stored in localStorage
+    const token = localStorage.getItem('token');
     if (token) {
-      setIsLoading(false); // User is logged in
+      setIsLoading(false); 
     } else {
-      setIsLoading(false); // User is not logged in
+      setIsLoading(false); 
     }
   }, []);
 
-  // Handle logout
+ 
   const handleLogout = () => {
     localStorage.removeItem('token');
     navigate('/login');
   };
 
-  const isLoggedIn = localStorage.getItem('token'); // Check if token exists
+  const isLoggedIn = localStorage.getItem('token'); 
 
   return (
     <div className="sticky top-0 z-50 bg-[#F2F7FF] bg-opacity-80 p-3 backdrop-blur-md">
       <div className="mx-auto flex max-w-screen-xl items-center justify-between">
         <div className="flex items-center gap-3">
-          {!isLoading && !isLoggedIn ? (
+          {(!isLoading && !isLoggedIn) || isHomePage ? (
             <>
               <ScrollLink to="home" smooth={true} duration={500} onClick={() => handleLinkClick('home')}>
                 <img
@@ -95,7 +96,7 @@ export default function Navbar() {
 
         {/* Desktop Menu */}
         <ul className="hidden items-center gap-10 md:flex">
-          {!isLoading && !isLoggedIn ? (
+          {(!isLoading && !isLoggedIn) || isHomePage ? (
             <>
               <li>
                 <ScrollLink to="home" smooth duration={500} className={`cursor-pointer ${activeLink === 'home' ? 'text-primary-start' : 'text-para opacity-80 hover:text-primary-start hover:opacity-100'}`} onClick={() => handleLinkClick('home')}>Home</ScrollLink>
@@ -130,7 +131,7 @@ export default function Navbar() {
         </ul>
 
         {/* Desktop Login/Logout Button */}
-        {!isLoading && !isLoggedIn ? (
+        {(!isLoading && !isLoggedIn) || isHomePage ? (
           <RouterLink to="/login" className="hidden md:block bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-7 py-3 rounded-full text-lg font-semibold transform transition-transform duration-300 hover:scale-105">
             Login
           </RouterLink>
@@ -181,7 +182,7 @@ export default function Navbar() {
                 className="absolute right-2 top-10 min-w-[240px] rounded-2xl border bg-white p-4 shadow-xl z-50"
               >
                 <ul className="mb-4 flex flex-col items-center gap-4">
-                  {!isLoading && !isLoggedIn ? (
+                  {(!isLoading && !isLoggedIn) || isHomePage ? (
                     <>
                       <li>
                         <ScrollLink to="home" smooth duration={500} onClick={() => handleLinkClick('home')} className={`cursor-pointer ${activeLink === 'home' ? 'text-primary-start' : 'text-para opacity-80 hover:text-primary-start'}`}>Home</ScrollLink>
@@ -216,7 +217,7 @@ export default function Navbar() {
                 </ul>
 
                 {/* Mobile Login/Logout Button */}
-                {!isLoading && !isLoggedIn ? (
+                {(!isLoading && !isLoggedIn) || isHomePage ? (
                   <RouterLink to="/login" onClick={handleCloseMenu} className="block w-full text-center bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-7 py-3 rounded-full text-md font-semibold">
                     Login
                   </RouterLink>
