@@ -8,7 +8,7 @@ const multer = require("multer");
 const sharp = require("sharp"); // Image processing library
 
 const router = express.Router();
-///curl -X POST "http://localhost:4000/auth/signup" -H "Content-Type: application/json" -d "{\"name\":\"John Doe\",\"email\":\"tusharg@gmail.com\",\"mobile_no\":\"9874546210\",\"dob\":\"2000-05-15\",\"gender\":1,\"password\":\"12345578\"}"
+///curl -X POST "http://localhost:4000/auth/signup" -H "Content-Type: application/json" -d "{\"name\":\"John Doe\",\"email\":\"tushara@gmail.com\",\"mobile_no\":\"8874546210\",\"dob\":\"2000-05-15\",\"gender\":1,\"password\":\"12345578\"}"
 router.post("/signup", async (req, res) => {
   try {
     const { name, email, mobile_no, dob, gender, password } = req.body;
@@ -65,7 +65,10 @@ router.post("/signup", async (req, res) => {
 
           const token = jwt.sign({ userId: result.insertId, email }, process.env.JWT_SECRET, { expiresIn: "7d" });
 
-          res.status(201).json({ message: "User registered successfully!", token });
+          res.status(201).json({ 
+            message: "User registered successfully!",
+            Name:name,
+            token });
         });
       });
     });
@@ -76,7 +79,7 @@ router.post("/signup", async (req, res) => {
 });
 
 
-//curl -X POST "http://localhost:4000/auth/login" -H "Content-Type: application/json" -d "{\"email\":\"tushar@gmail.com\",\"password\":\"12345678\"}"
+//curl -X POST "http://localhost:4000/auth/login" -H "Content-Type: application/json" -d "{\"email\":\"tusharsaini@gmail.com\",\"password\":\"12345678\"}"
 
 
 // Login API 
@@ -92,7 +95,7 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ error: "Password must be at least 8 characters long!" });
     }
 
-    const sql = "SELECT id, email, password FROM users WHERE email = ?";
+    const sql = "SELECT id,name, email, password FROM users WHERE email = ?";
     db.query(sql, [email], async (err, results) => {
       if (err) {
         console.error("Database Error:", err);
@@ -112,7 +115,7 @@ router.post("/login", async (req, res) => {
 
       const token = jwt.sign({ userId: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: "7d" });
 
-      res.status(200).json({ message: "Login successful!", token });
+      res.status(200).json({ message: "Login successful!",Name:user.name, token });
     });
   } catch (error) {
     console.error("Login Error:", error);
