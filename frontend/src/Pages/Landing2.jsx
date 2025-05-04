@@ -1,8 +1,10 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import HeartModel from '../components/heart';
 
-let name=localStorage.getItem("name");
-function Landing2({ name }) {
+const Landing2 = () => {
+  const name = localStorage.getItem("name");
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="p-8 flex flex-col md:flex-row items-center justify-center">
@@ -21,14 +23,9 @@ function Landing2({ name }) {
           <Link to="/health" className="bg-gradient-to-r from-indigo-500 to-pink-500 text-white text-base px-6 py-3 rounded-full shadow-md hover:shadow-lg transition-all">
             Check My Health
           </Link>
-
         </div>
         <div className="md:w-1/2 flex justify-center p-4">
-          <img
-            src="https://media.istockphoto.com/id/1285488837/photo/human-circulatory-system-heart-anatomy.jpg?s=612x612&w=0&k=20&c=Grm7TImEytF0bsRWNzfRL8iVhbRUGPB7L2txDk2HEUc="
-            alt="3D Heart Illustration"
-            className="max-w-full h-auto rounded-lg shadow-lg"
-          />
+          <HeartModel />
         </div>
       </div>
 
@@ -125,6 +122,6 @@ function Landing2({ name }) {
       </div>
     </div>
   );
-}
+};
 
 export default Landing2;

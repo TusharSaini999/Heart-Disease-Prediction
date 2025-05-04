@@ -52,7 +52,7 @@ const LoginPage = () => {
   
         // Store token in localStorage or cookie
         localStorage.setItem("token", data.token);
-        localStorage.setItem("name",data.name);
+        localStorage.setItem("name",data.Name);
         console.log("Login successful!");
         navigate("/landing2");
       } catch (err) {
