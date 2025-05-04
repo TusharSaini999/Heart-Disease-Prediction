@@ -1,14 +1,14 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-
-function Landing2({ user }) {
+let name=localStorage.getItem("name");
+function Landing2({ name }) {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="p-8 flex flex-col md:flex-row items-center justify-center">
         <div className="max-w-xl md:w-1/2 p-4 md:p-8">
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-            <span role="img" aria-label="wave">👋</span> Welcome, <span className="text-blue-500">{user?.name || "Guest"}</span>!
+            <span role="img" aria-label="wave">👋</span> Welcome, <span className="text-blue-500">{name || "Guest"}</span>!
           </h1>
           <p className="text-lg text-gray-500 mb-8">
             To begin your heart health analysis, make sure you have the following medical reports ready. They help us provide the most accurate prediction.

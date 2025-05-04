@@ -83,7 +83,8 @@ const Signup = () => {
           return;
         }
   
-        localStorage.setItem("token", data.token); // Save token if needed
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("name",data.name); // Save token if needed
         console.log("Signup successful!");
         navigate("/landing2"); // Redirect after signup
       } catch (err) {
