@@ -1,99 +1,238 @@
 import { HiMiniBars3BottomRight } from "react-icons/hi2";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { IoMdClose } from "react-icons/io";
 import { Link as ScrollLink } from 'react-scroll';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate ,useLocation } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [activeLink, setActiveLink] = useState('home');
+  const [activeLinks, setActiveLinks] = useState('home');
+  const [isLoading, setIsLoading] = useState(true);
+  const menuRef = useRef(null);
+  const navigate = useNavigate();
+  const location = useLocation(); 
+  const isHomePage = location.pathname === '/';
+  console.log(isHomePage)
+
+  const handleCloseMenu = () => setIsOpen(false);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen]);
+
+  
+  const handleLinkClick = (link) => {
+    setActiveLink(link);
+    setIsOpen(false); 
+  };
+
+  const handleLinkClicks = (link) => {
+    setActiveLinks(link);
+    setIsOpen(false); 
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      setIsLoading(false); 
+    } else {
+      setIsLoading(false); 
+    }
+  }, []);
+
+ 
+  const handleLogout = () => {
+    localStorage.removeItem("name");
+    localStorage.removeItem('token');
+    navigate('/login');
+  };
+
+  const isLoggedIn = localStorage.getItem('token'); 
 
   return (
     <div className="sticky top-0 z-50 bg-[#F2F7FF] bg-opacity-80 p-3 backdrop-blur-md">
       <div className="mx-auto flex max-w-screen-xl items-center justify-between">
-        <ScrollLink to="/">
-          <img
-            className="h-[50px] rounded-full w-[50px] object-contain"
-            src="https://th.bing.com/th/id/OIP.Y2dAxeNpJoEBfex-qXl3UAHaHa?w=512&h=512&rs=1&pid=ImgDetMain"
-            alt="Logo"
-          />
-        </ScrollLink>
+        <div className="flex items-center gap-3">
+          {(!isLoading && !isLoggedIn) || isHomePage ? (
+            <>
+              <ScrollLink to="home" smooth={true} duration={500} onClick={() => handleLinkClick('home')}>
+                <img
+                  className="h-[50px] w-[50px] object-contain rounded-full"
+                  src="https://th.bing.com/th/id/OIP.Y2dAxeNpJoEBfex-qXl3UAHaHa?w=512&h=512&rs=1&pid=ImgDetMain"
+                  alt="Logo"
+                />
+              </ScrollLink>
+              <ScrollLink to="home" smooth={true} duration={500} onClick={() => handleLinkClick('home')} className="text-2xl font-semibold text-primary-start hidden md:block">
+                HeartSense.AI
+              </ScrollLink>
+            </>
+          ) :
+            <>
+              <RouterLink to="/landing2" onClick={() => handleLinkClicks('home')}>
+                <img
+                  className="h-[50px] w-[50px] object-contain rounded-full"
+                  src="https://th.bing.com/th/id/OIP.Y2dAxeNpJoEBfex-qXl3UAHaHa?w=512&h=512&rs=1&pid=ImgDetMain"
+                  alt="Logo"
+                />
+              </RouterLink>
+              <RouterLink to="/landing2" className="text-2xl font-semibold text-primary-start hidden md:block" onClick={() => handleLinkClicks('home')}>
+                HeartSense.AI
+              </RouterLink>
+            </>}
+        </div>
 
+        {/* Desktop Menu */}
         <ul className="hidden items-center gap-10 md:flex">
-          <li>
-            <ScrollLink className="text-primary-start hover:text-primary-start hover:opacity-100" to="/">
-              Home
-            </ScrollLink>
-          </li>
-          <li>
-            <ScrollLink to="about" style={{ cursor: 'pointer' }} smooth={true} duration={500} className="text-para opacity-80 hover:text-primary-start hover:opacity-100">
-              About
-            </ScrollLink>
-          </li>
-          <li>
-            <ScrollLink to="service" style={{ cursor: 'pointer' }} smooth={true} duration={500} className="text-para opacity-80 hover:text-primary-start hover:opacity-100">
-              Service
-            </ScrollLink>
-          </li>
-          <li>
-            <ScrollLink to="measure" style={{ cursor: 'pointer' }} smooth={true} duration={500} className="text-para opacity-80 hover:text-primary-start hover:opacity-100" >
-              Measure
-            </ScrollLink>
-          </li>
-          <li>
-            <ScrollLink to="mission" style={{ cursor: 'pointer' }} smooth={true} duration={500} className="text-para opacity-80 hover:text-primary-start hover:opacity-100" >
-              Mission
-            </ScrollLink>
-          </li>
+          {(!isLoading && !isLoggedIn) || isHomePage ? (
+            <>
+              <li>
+                <ScrollLink to="home" smooth duration={500} className={`cursor-pointer ${activeLink === 'home' ? 'text-primary-start' : 'text-para opacity-80 hover:text-primary-start hover:opacity-100'}`} onClick={() => handleLinkClick('home')}>Home</ScrollLink>
+              </li>
+              <li>
+                <ScrollLink to="about" smooth duration={500} className={`cursor-pointer ${activeLink === 'about' ? 'text-primary-start' : 'text-para opacity-80 hover:text-primary-start hover:opacity-100'}`} onClick={() => handleLinkClick('about')}>About</ScrollLink>
+              </li>
+              <li>
+                <ScrollLink to="service" smooth duration={500} className={`cursor-pointer ${activeLink === 'service' ? 'text-primary-start' : 'text-para opacity-80 hover:text-primary-start hover:opacity-100'}`} onClick={() => handleLinkClick('service')}>Service</ScrollLink>
+              </li>
+              <li>
+                <ScrollLink to="measure" smooth duration={500} className={`cursor-pointer ${activeLink === 'measure' ? 'text-primary-start' : 'text-para opacity-80 hover:text-primary-start hover:opacity-100'}`} onClick={() => handleLinkClick('measure')}>Measure</ScrollLink>
+              </li>
+              <li>
+                <ScrollLink to="mission" smooth duration={500} className={`cursor-pointer ${activeLink === 'mission' ? 'text-primary-start' : 'text-para opacity-80 hover:text-primary-start hover:opacity-100'}`} onClick={() => handleLinkClick('mission')}>Mission</ScrollLink>
+              </li>
+            </>
+          ) : (
+            <>
+              <li>
+                <RouterLink to="/landing2" className={`cursor-pointer ${activeLinks === 'home' ? 'text-primary-start' : 'text-para opacity-80 hover:text-primary-start hover:opacity-100'}`} onClick={() => handleLinkClicks('home')}>Home</RouterLink>
+              </li>
+              <li>
+                <RouterLink to="/profile" className={`cursor-pointer ${activeLinks === 'profile' ? 'text-primary-start' : 'text-para opacity-80 hover:text-primary-start hover:opacity-100'}`}
+                  onClick={() => handleLinkClicks('profile')}>Profile</RouterLink>
+              </li>
+              <li>
+                <RouterLink to="/history" className={`cursor-pointer ${activeLinks === 'history' ? 'text-primary-start' : 'text-para opacity-80 hover:text-primary-start hover:opacity-100'}`} onClick={() => handleLinkClicks('history')}>History</RouterLink>
+              </li>
+            </>
+          )}
         </ul>
 
-        <RouterLink to="/login" className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-7 py-4 rounded-full text-lg font-semibold hover:-rotate-3 transition">
-          Login
-        </RouterLink>
+        {/* Desktop Login/Logout Button */}
+        {(!isLoading && !isLoggedIn) || isHomePage ? (
+          <RouterLink to="/login" className="hidden md:block bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-7 py-3 rounded-full text-lg font-semibold transform transition-transform duration-300 hover:scale-105">
+            Login
+          </RouterLink>
+        ) : (
+          <button
+            onClick={handleLogout}
+            className="hidden md:block bg-gradient-to-r from-red-400 to-red-600 text-white px-7 py-3 rounded-full text-lg font-semibold transform transition-transform duration-300 hover:scale-105"
+          >
+            Logout
+          </button>
+        )}
 
-        {/* Mobile Screen */}
+        {/* Mobile Menu Icon */}
         <div className="relative md:hidden">
-          {isOpen ? (
-            <IoMdClose
-              onClick={() => setIsOpen(false)}
-              className="size-7 cursor-pointer text-primary-end"
-            />
-          ) : (
-            <HiMiniBars3BottomRight
-              onClick={() => setIsOpen(true)}
-              className="size-7 cursor-pointer text-primary-end"
-            />
-          )}
+          <AnimatePresence mode="wait" initial={false}>
+            {isOpen ? (
+              <motion.div
+                key="close"
+                initial={{ rotate: 90, opacity: 0, scale: 0.8 }}
+                animate={{ rotate: 0, opacity: 1, scale: 1 }}
+                exit={{ rotate: -90, opacity: 0, scale: 0.8 }}
+                transition={{ duration: 0.3 }}
+              >
+                <IoMdClose onClick={handleCloseMenu} className="size-7 cursor-pointer text-primary-end" />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="menu"
+                initial={{ rotate: -90, opacity: 0, scale: 0.8 }}
+                animate={{ rotate: 0, opacity: 1, scale: 1 }}
+                exit={{ rotate: 90, opacity: 0, scale: 0.8 }}
+                transition={{ duration: 0.3 }}
+              >
+                <HiMiniBars3BottomRight onClick={() => setIsOpen(true)} className="size-7 cursor-pointer text-primary-end" />
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-          {isOpen && (
-            <div className="absolute right-2 top-8 min-w-[220px] rounded-2xl border bg-white p-4 shadow-lg">
-              <ul className="mb-8 flex flex-col items-center gap-6">
-                <li>
-                  <Link className="text-primary-start hover:text-primary-start hover:opacity-100" to="/">
-                    Home
-                  </Link>
-                </li>
-                <li>
-                  <Link to="aboutSection" smooth={true} duration={500} className="text-para opacity-80 hover:text-primary-start hover:opacity-100">
-                    About
-                  </Link>
-                </li>
-                <li>
-                  <Link className="text-para opacity-80 hover:text-primary-start hover:opacity-100" to="/services">
-                    Service
-                  </Link>
-                </li>
-                <li>
-                  <Link className="text-para opacity-80 hover:text-primary-start hover:opacity-100" to="/contact">
-                    Contact
-                  </Link>
-                </li>
-              </ul>
+          {/* Animated Mobile Menu */}
+          <AnimatePresence>
+            {isOpen && (
+              <motion.div
+                ref={menuRef}
+                initial={{ opacity: 0, y: -20, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -20, scale: 0.95 }}
+                transition={{ duration: 0.3 }}
+                className="absolute right-2 top-10 min-w-[240px] rounded-2xl border bg-white p-4 shadow-xl z-50"
+              >
+                <ul className="mb-4 flex flex-col items-center gap-4">
+                  {(!isLoading && !isLoggedIn) || isHomePage ? (
+                    <>
+                      <li>
+                        <ScrollLink to="home" smooth duration={500} onClick={() => handleLinkClick('home')} className={`cursor-pointer ${activeLink === 'home' ? 'text-primary-start' : 'text-para opacity-80 hover:text-primary-start'}`}>Home</ScrollLink>
+                      </li>
+                      <li>
+                        <ScrollLink to="about" smooth duration={500} onClick={() => handleLinkClick('about')} className={`cursor-pointer ${activeLink === 'about' ? 'text-primary-start' : 'text-para opacity-80 hover:text-primary-start'}`}>About</ScrollLink>
+                      </li>
+                      <li>
+                        <ScrollLink to="service" smooth duration={500} onClick={() => handleLinkClick('service')} className={`cursor-pointer ${activeLink === 'service' ? 'text-primary-start' : 'text-para opacity-80 hover:text-primary-start'}`}>Service</ScrollLink>
+                      </li>
+                      <li>
+                        <ScrollLink to="measure" smooth duration={500} onClick={() => handleLinkClick('measure')} className={`cursor-pointer ${activeLink === 'measure' ? 'text-primary-start' : 'text-para opacity-80 hover:text-primary-start'}`}>Measure</ScrollLink>
+                      </li>
+                      <li>
+                        <ScrollLink to="mission" smooth duration={500} onClick={() => handleLinkClick('mission')} className={`cursor-pointer ${activeLink === 'mission' ? 'text-primary-start' : 'text-para opacity-80 hover:text-primary-start'}`}>Mission</ScrollLink>
+                      </li>
+                    </>
+                  ) : (
+                    <>
+                      <li>
+                        <RouterLink to="/landing2" className={`cursor-pointer ${activeLinks === 'home' ? 'text-primary-start' : 'text-para opacity-80 hover:text-primary-start hover:opacity-100'}`} onClick={() => handleLinkClicks('home')}>Home</RouterLink>
+                      </li>
+                      <li>
+                        <RouterLink to="/profile" className={`cursor-pointer ${activeLinks === 'profile' ? 'text-primary-start' : 'text-para opacity-80 hover:text-primary-start hover:opacity-100'}`}
+                          onClick={() => handleLinkClicks('profile')}>Profile</RouterLink>
+                      </li>
+                      <li>
+                        <RouterLink to="/history" className={`cursor-pointer ${activeLinks === 'history' ? 'text-primary-start' : 'text-para opacity-80 hover:text-primary-start hover:opacity-100'}`} onClick={() => handleLinkClicks('history')}>History</RouterLink>
+                      </li>
+                    </>
+                  )}
+                </ul>
 
-              <Link to="/login" className="block w-full text-center bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-7 py-4 rounded-full text-lg font-semibold hover:-rotate-3 transition">
-                Login
-              </Link>
-            </div>
-          )}
+                {/* Mobile Login/Logout Button */}
+                {(!isLoading && !isLoggedIn) || isHomePage ? (
+                  <RouterLink to="/login" onClick={handleCloseMenu} className="block w-full text-center bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-7 py-3 rounded-full text-md font-semibold">
+                    Login
+                  </RouterLink>
+                ) : (
+                  <button
+                    onClick={handleLogout}
+                    className="block w-full text-center bg-gradient-to-r from-red-400 to-red-600 text-white px-7 py-3 rounded-full text-md font-semibold"
+                  >
+                    Logout
+                  </button>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </div>
