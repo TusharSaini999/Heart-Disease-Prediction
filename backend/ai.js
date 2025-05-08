@@ -93,7 +93,8 @@ router.post("/", verifyToken, async (req, res) => {
     } catch (error) {
         res.status(500).json({
             error: "Prediction or Database error",
-            details: error.response ? error.response.data : error.message
+            details: error.response ? error.response.data : error.message,
+            error:e,
         });
     }
 });
