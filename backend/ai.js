@@ -27,7 +27,6 @@ router.post("/", verifyToken, async (req, res) => {
         const { features } = req.body;
         const uid = req.user.userId;
 
-
         if (!features || !Array.isArray(features)) {
             return res.status(400).json({ error: "Invalid input format. 'features' must be an array." });
         }

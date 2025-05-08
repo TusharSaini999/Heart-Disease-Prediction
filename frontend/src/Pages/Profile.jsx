@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import Modal from "react-modal";
-import { Link } from "react-router-dom";
 Modal.setAppElement("#root");
 
 function Profile() {
@@ -30,12 +28,16 @@ function Profile() {
         if (!response.ok) throw new Error(data.error || "Failed to fetch");
   
         const user = data.profile;
+  
+        // Convert the dob to the required format (yyyy-MM-dd)
+        const dob = new Date(user.dob).toISOString().split('T')[0]; // Format as yyyy-MM-dd
+  
         setFormData({
           name: user.name,
           email: user.email,
           phone: user.mobile_no,
-          dob: user.dob,
-          gender: user.gender === "Male" ? 1 : 0,
+          dob: dob, // Set the formatted date
+          gender: user.gender === "Male" ? 1 : 0, // Set gender as 1 for Male, 0 for Female
           image: user.profile_photo,
         });
         setLoading(false);
@@ -51,7 +53,9 @@ function Profile() {
       setError("No token found. Please log in.");
       setLoading(false);
     }
-  }, [token]);  
+  }, [token]);
+  
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -63,18 +67,18 @@ function Profile() {
       openModal("Please enter your password to confirm changes.");
       return;
     }
-
-    
+  
     try {
       const formDataObj = new FormData();
-      
+  
+      // Format the DOB to the expected format (ISO date string)
       const isoDate = formData.dob;
       const formattedDate = isoDate.split("T")[0]; // "2000-05-15"
-      
+  
       formDataObj.append("name", formData.name);
       formDataObj.append("mobile_no", formData.phone);
-      formDataObj.append("dob", formattedDate);
-      formDataObj.append("gender", formData.gender); // 0 for Female, 1 for Male
+      formDataObj.append("dob", formattedDate); // Include the formatted DOB
+      formDataObj.append("gender", formData.gender); // Gender (0 or 1)
       formDataObj.append("password", password);
   
       if (selectedImage) {
@@ -83,11 +87,6 @@ function Profile() {
   
       setLoading(true);
   
-      // for (let pair of formDataObj.entries()) {
-      //   console.log(pair[0] + ': ' + pair[1]);
-      // }
-      // console.log("Token: ", token);
-
       const response = await fetch(import.meta.env.VITE_BACKEND_URL + "/auth/update-profile", {
         method: "PUT",
         headers: {
@@ -111,6 +110,7 @@ function Profile() {
     }
   };
   
+
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -291,6 +291,31 @@ function Profile() {
                 disabled={!isEditing}
                 className={`w-full border rounded-md px-3 py-2 text-gray-800 focus:outline-none ${!isEditing ? "bg-gray-100" : ""}`}
               />
+            </div>
+            <div>
+              <label className="block text-gray-600 text-sm mb-1">Date of Birth</label>
+              <input
+                type="date"
+                name="dob"
+                value={formData.dob || ""}
+                onChange={handleChange}
+                disabled={!isEditing}
+                className={`w-full border rounded-md px-3 py-2 text-gray-800 focus:outline-none ${!isEditing ? "bg-gray-100" : ""}`}
+              />
+            </div>
+
+            <div>
+              <label className="block text-gray-600 text-sm mb-1">Gender</label>
+              <select
+                name="gender"
+                value={formData.gender || ""}
+                onChange={handleChange}
+                disabled={!isEditing}
+                className={`w-full border rounded-md px-3 py-2 text-gray-800 focus:outline-none ${!isEditing ? "bg-gray-100" : ""}`}
+              >
+                <option value={0}>Female</option>
+                <option value={1}>Male</option>
+              </select>
             </div>
 
             {isEditing && (

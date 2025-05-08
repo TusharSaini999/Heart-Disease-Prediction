@@ -7,8 +7,6 @@ import Services from "../components/Services";
 import Checknow from "../components/Checknow";
 import ServiceCards from "../components/ServiceCards";;
 import VideoSection from "../components/VideoSection";
-import { Link as ScrollLink } from 'react-scroll';
-import { Link as RouterLink } from 'react-router-dom';
 
 
 

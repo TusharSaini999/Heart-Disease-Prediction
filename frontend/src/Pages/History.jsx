@@ -17,12 +17,14 @@ const History = () => {
         });
   
         const result = await response.json();
-  
+        console.log(result);
         if (!response.ok) {
           throw new Error(result.error || "Failed to fetch records");
         }
   
-        setRecords(result.data || []); // Use `result.data` since your backend returns `{ success: true, data: [...] }`
+        // Sort the records by created_at in ascending order to show newer records at the bottom
+        const sortedRecords = result.data ? result.data.sort((a, b) => new Date(a.created_at) - new Date(b.created_at)) : [];
+        setRecords(sortedRecords); // Sort the data before setting the state
       } catch (error) {
         console.error("Failed to fetch records:", error.message);
       }
@@ -32,6 +34,8 @@ const History = () => {
   }, []);
   
 
+  
+
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       <h1 className="text-3xl font-semibold text-blue-600">Patient History</h1>
@@ -39,41 +43,7 @@ const History = () => {
         Review patient heart health records and diagnosis history to ensure accurate medical assessment and follow-up care.
       </p>
 
-      <div className="flex flex-wrap gap-2 mb-4">
-        <button className="bg-blue-100 text-blue-600 px-4 py-2 rounded">All Records</button>
-        <button className="border px-4 py-2 rounded">Heart-Attack Free</button>
-        <button className="border px-4 py-2 rounded">Heart-Attack Risk</button>
-      </div>
-
-      <div className="flex justify-between items-center mb-4">
-        <div className="flex items-center w-full max-w-xl bg-blue-100 rounded-full px-4 py-2">
-          <input
-            className="bg-transparent border-none focus:outline-none w-full"
-            placeholder="Search history records..."
-          />
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-5 h-5 text-gray-500"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"
-            />
-          </svg>
-        </div>
-
-        <button className="ml-4 bg-white shadow px-4 py-2 rounded-2xl flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10m-11 4h12m-9 4h6" />
-          </svg>
-          Filter
-        </button>
-      </div>
+      
 
       <div className="overflow-x-auto rounded-xl">
         <table className="w-full text-left border-collapse">
@@ -96,37 +66,78 @@ const History = () => {
             ) : (
               records.map((record, index) => (
                 <tr key={index} className="even:bg-gray-100 odd:bg-white">
-                  <td className="px-4 py-2">{index + 1}</td>
-                  <td className="px-4 py-2">{record.chestPain}</td>
-                  <td className="px-4 py-2">{record.restingBP}</td>
-                  <td className="px-4 py-2">{record.cholesterol}</td>
-                  <td className="px-4 py-2">{record.fastingBP}</td>
-                  <td className="px-4 py-2">{record.ecgResults}</td>
-                  <td className="px-4 py-2">{record.maxHeartRate}</td>
-                  <td className="px-4 py-2">{record.angina}</td>
-                  <td className="px-4 py-2">{record.depression}</td>
-                  <td className="px-4 py-2">{record.stSegment}</td>
-                  <td className="px-4 py-2">{record.bloodVessels}</td>
-                  <td className="px-4 py-2">{record.thalassemia}</td>
-                  <td className="px-4 py-2">{record.result}</td>
-                  <td className="px-4 py-2">{record.time}</td>
-                </tr>
+                <td className="px-4 py-2">{index + 1}</td>
+              
+                {/* Chest Pain Type */}
+                <td className="px-4 py-2">
+                  {record.cp === 0 ? "Typical Angina" :
+                   record.cp === 1 ? "Atypical Angina" :
+                   record.cp === 2 ? "Non-Anginal Pain" :
+                   record.cp === 3 ? "Asymptomatic" : "N/A"}
+                </td>
+              
+                {/* Resting Blood Pressure */}
+                <td className="px-4 py-2">{record.trestbps >= 80 && record.trestbps <= 200 ? record.trestbps : "N/A"}</td>
+              
+                {/* Cholesterol Level */}
+                <td className="px-4 py-2">{record.chol >= 100 && record.chol <= 500 ? record.chol : "N/A"}</td>
+              
+                {/* Fasting Blood Sugar */}
+                <td className="px-4 py-2">{record.fbs === 0 ? "Normal" : record.fbs === 1 ? "High" : "N/A"}</td>
+              
+                {/* Resting ECG Results */}
+                <td className="px-4 py-2">
+                  {record.restecg === 0 ? "Normal" :
+                   record.restecg === 1 ? "ST-T Wave Abnormality" :
+                   record.restecg === 2 ? "Left Ventricular Hypertrophy" : "N/A"}
+                </td>
+              
+                {/* Maximum Heart Rate Achieved */}
+                <td className="px-4 py-2">{record.thalach >= 60 && record.thalach <= 220 ? record.thalach : "N/A"}</td>
+              
+                {/* Exercise-Induced Angina */}
+                <td className="px-4 py-2">{record.exang === 0 ? "No" : record.exang === 1 ? "Yes" : "N/A"}</td>
+              
+                {/* ST Depression */}
+                <td className="px-4 py-2">{record.oldpeak >= 0.0 && record.oldpeak <= 6.0 ? record.oldpeak : "N/A"}</td>
+              
+                {/* Slope of ST Segment */}
+                <td className="px-4 py-2">
+                  {record.slope === 0 ? "Upsloping" :
+                   record.slope === 1 ? "Flat" :
+                   record.slope === 2 ? "Downsloping" : "N/A"}
+                </td>
+              
+                {/* Number of Major Blood Vessels */}
+                <td className="px-4 py-2">{record.ca >= 0 && record.ca <= 3 ? record.ca : "N/A"}</td>
+              
+                {/* Thalassemia Test Result */}
+                <td className="px-4 py-2">
+                  {record.thal === 1 ? "Normal" :
+                   record.thal === 2 ? "Fixed Defect" :
+                   record.thal === 3 ? "Reversible Defect" : "N/A"}
+                </td>
+              
+                {/* Heart Disease Type */}
+                <td className="px-4 py-2">
+                  {record.target_multi === 0 ? "No Heart Disease" :
+                   record.target_multi === 1 ? "Coronary Artery Disease" :
+                   record.target_multi === 2 ? "Heart Failure" :
+                   record.target_multi === 3 ? "Arrhythmia" :
+                   record.target_multi === 4 ? "Valvular Heart Disease" : "N/A"}
+                </td>
+              
+                {/* Time */}
+                <td className="px-4 py-2">{new Date(record.created_at).toLocaleString() || "N/A"}</td>
+              </tr>
+              
               ))
             )}
           </tbody>
         </table>
       </div>
 
-      <div className="mt-6 flex justify-center space-x-2 text-sm text-gray-700">
-        {["1", "2", "3", "...", "67", "68"].map((num, i) => (
-          <button
-            key={i}
-            className={`w-8 h-8 p-0 rounded-full ${num === "1" ? "bg-black text-white" : "hover:bg-gray-200"}`}
-          >
-            {num}
-          </button>
-        ))}
-      </div>
+      
     </div>
   );
 };
