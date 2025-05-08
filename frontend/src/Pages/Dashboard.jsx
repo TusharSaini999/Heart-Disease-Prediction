@@ -1,38 +1,52 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from "react-router-dom";
+
+
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
 
 export default function HeartDiseaseForm() {
   const [formData, setFormData] = useState({
     age: '', sex: '', cp: '', trestbps: '', chol: '', fbs: '', restecg: '',
-    thalach: '', exang: '', oldpeak: '', slope: '', ca: '', thal: '', target_multi: ''
+    thalach: '', exang: '', oldpeak: '', slope: '', ca: '', thal: '',
   });
   const [prediction, setPrediction] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // const [formData, setFormData] = useState({
-  //   age: '63',               // Valid range: 20–90
-  //   sex: '1',                // 0 = Female, 1 = Male
-  //   cp: '2',                 // Chest Pain Type (0–3)
-  //   trestbps: '145',         // Resting BP (80–200)
-  //   chol: '233',             // Cholesterol (100–500)
-  //   fbs: '1',                // Fasting Blood Sugar (0 = Normal, 1 = High)
-  //   restecg: '0',            // Resting ECG (0–2)
-  //   thalach: '150',          // Max Heart Rate (60–220)
-  //   exang: '1',              // Exercise-Induced Angina (0 = No, 1 = Yes)
-  //   oldpeak: '2.3',          // ST Depression (0.0–6.0)
-  //   slope: '2',              // ST Segment Slope (0–2)
-  //   ca: '3',                 // Major Vessels (0–3)
-  //   thal: '3',               // Thalassemia (1–3)
-  //   target_multi: '4'        // Heart Disease Type (0–4)
-  // });
-  
   const navigate = useNavigate();
+
+  // Fetch user info (age and gender) on component mount
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      const token = localStorage.getItem("token");
+      try {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/auth/user-info`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setFormData((prev) => ({
+            ...prev,
+            age: data.age,
+            sex: data.gender,
+          }));
+        } else {
+          setError('Failed to fetch user info.');
+        }
+      } catch (err) {
+        setError('A network error occurred while fetching user info.');
+      }
+    };
+
+    fetchUserInfo();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-   
   };
 
   const handleSubmit = async (e) => {
@@ -55,7 +69,6 @@ export default function HeartDiseaseForm() {
       slope: Number(formData.slope),
       ca: Number(formData.ca),
       thal: Number(formData.thal),
-      target_multi: Number(formData.target_multi),
     };
   
     const token = localStorage.getItem("token");
@@ -84,8 +97,14 @@ export default function HeartDiseaseForm() {
       setLoading(false);
     }
   };
-  
-  
+
+  const heartDiseaseTypes = {
+    0: "No heart disease",
+    1: "Coronary Artery Disease",
+    2: "Heart Failure",
+    3: "Arrhythmia",
+    4: "Valvular Heart Disease"
+  };
 
   return (
     <div className="min-h-screen bg-cover bg-center" style={{ backgroundImage: 'url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRy7_gEjLSEKrA2n9Mt58ZjQF_xT-Fz5yi7FA&s")' }}>
@@ -106,6 +125,7 @@ export default function HeartDiseaseForm() {
           </select>
         </div>
 
+        
         <div className="flex flex-col">
           <label className="font-semibold mb-1">❤️ Chest Pain Type</label>
           <select name="cp" value={formData.cp} onChange={handleChange} className="border rounded px-3 py-2" required>
@@ -190,17 +210,6 @@ export default function HeartDiseaseForm() {
           </select>
         </div>
 
-        <div className="flex flex-col">
-          <label className="font-semibold mb-1">🩺 Heart Disease Type</label>
-          <select name="target_multi" value={formData.target_multi} onChange={handleChange} className="border rounded px-3 py-2" required>
-            <option value="">Select</option>
-            <option value="0">🟢 No Disease</option>
-            <option value="1">❤️ CAD</option>
-            <option value="2">💔 Heart Failure</option>
-            <option value="3">⚡ Arrhythmia</option>
-            <option value="4">🔧 Valve Disease</option>
-          </select>
-        </div>
 
         <div className="col-span-2 text-center">
           <button type="submit" className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold px-8 py-3 rounded-full hover:opacity-90 shadow-lg">
@@ -217,7 +226,7 @@ export default function HeartDiseaseForm() {
 
       {prediction !== null && (
         <div className="col-span-2 mt-4 text-center bg-green-100 text-green-800 px-4 py-3 rounded shadow">
-          ✅ Predicted Heart Disease Type: <strong>{prediction}</strong>
+          ✅ Predicted Heart Disease Type: <strong>{heartDiseaseTypes[prediction]}</strong>
         </div>
       )}
 
