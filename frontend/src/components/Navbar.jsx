@@ -1,18 +1,28 @@
 import { HiMiniBars3BottomRight } from "react-icons/hi2";
 import { useState, useEffect, useRef } from "react";
 import { IoMdClose } from "react-icons/io";
-import { Link as ScrollLink } from 'react-scroll';
-import { Link as RouterLink, useNavigate ,useLocation } from 'react-router-dom';
+import { Link as ScrollLink,scroller } from 'react-scroll';
+import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [activeLink, setActiveLink] = useState('home');
-  const [activeLinks, setActiveLinks] = useState('home');
+  const [activeLink, setActiveLink] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('activeLink') || 'home';
+    }
+    return 'home';
+  });
+  const [activeLinks, setActiveLinks] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('activeLinks') || 'home';
+    }
+    return 'home';
+  });
   const [isLoading, setIsLoading] = useState(true);
   const menuRef = useRef(null);
   const navigate = useNavigate();
-  const location = useLocation(); 
+  const location = useLocation();
   const isHomePage = location.pathname === '/';
   console.log(isHomePage)
 
@@ -34,34 +44,47 @@ export default function Navbar() {
     };
   }, [isOpen]);
 
-  
+  useEffect(() => {
+    if (activeLink) {
+      scroller.scrollTo(activeLink, {
+        smooth: true,
+        duration: 500,
+        offset: -50, 
+      });
+    }
+  }, [activeLink]);
+
   const handleLinkClick = (link) => {
+    localStorage.setItem('activeLink', link);
     setActiveLink(link);
-    setIsOpen(false); 
+    setIsOpen(false);
   };
 
   const handleLinkClicks = (link) => {
+    localStorage.setItem('activeLinks', link);
     setActiveLinks(link);
-    setIsOpen(false); 
+    setIsOpen(false);
   };
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      setIsLoading(false); 
+      setIsLoading(false);
     } else {
-      setIsLoading(false); 
+      setIsLoading(false);
     }
   }, []);
 
- 
+
   const handleLogout = () => {
     localStorage.removeItem("name");
     localStorage.removeItem('token');
+    localStorage.removeItem('activeLinks');
+    localStorage.removeItem('activeLink');
     navigate('/login');
   };
 
-  const isLoggedIn = localStorage.getItem('token'); 
+  const isLoggedIn = localStorage.getItem('token');
 
   return (
     <div className="sticky top-0 z-50 bg-[#F2F7FF] bg-opacity-80 p-3 backdrop-blur-md">
