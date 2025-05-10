@@ -31,7 +31,8 @@ function Profile() {
   
         // Convert the dob to the required format (yyyy-MM-dd)
         const dob = new Date(user.dob).toISOString().split('T')[0]; // Format as yyyy-MM-dd
-  
+
+        localStorage.setItem("name", user.name);
         setFormData({
           name: user.name,
           email: user.email,
