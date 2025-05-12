@@ -28,7 +28,7 @@ export default function About() {
 
 
         </p>
-        <Button title="Predict Now" Icon={FaArrowAltCircleRight} />
+       
       </div>
     </div>
    

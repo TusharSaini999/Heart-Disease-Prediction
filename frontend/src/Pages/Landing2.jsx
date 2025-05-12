@@ -1,112 +1,136 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import HeartModel from '../components/heart';
+import { motion } from "framer-motion";
+import HeartModel from "../components/heart";
+
+const reportItems = [
+  {
+    title: "Chest Pain Type",
+    emoji: "❤️",
+    type: "Valid Types:",
+    details: ["Typical Angina", "Atypical Angina", "Non-Anginal Pain", "Asymptomatic"],
+  },
+  {
+    title: "Resting ECG Results",
+    emoji: "🧑‍⚕️",
+    type: "Valid Values:",
+    details: ["Normal", "ST-T wave abnormality", "Left ventricular hypertrophy"],
+  },
+  {
+    title: "Thalassemia Test Result",
+    emoji: "🧬",
+    type: "Valid Values:",
+    details: ["Normal", "Fixed Defect", "Reversible Defect"],
+  },
+  {
+    title: "Resting Blood Pressure",
+    emoji: "💉",
+    type: "Valid Range:",
+    details: ["80 - 200 mmHg"],
+  },
+  {
+    title: "Cholesterol Level",
+    emoji: "💪",
+    type: "Valid Range:",
+    details: ["100 - 500 mg/dL"],
+  },
+  {
+    title: "ST Depression",
+    emoji: "📉",
+    type: "Valid Range:",
+    details: ["0.0 - 6.0 mm"],
+  },
+  {
+    title: "Fasting Blood Sugar",
+    emoji: "🧠",
+    type: "Valid Values:",
+    details: ["Normal", "High"],
+  },
+  {
+    title: "Exercise-Induced Angina",
+    emoji: "🏃‍♂️",
+    type: "Valid Values:",
+    details: ["No", "Yes"],
+  },
+  {
+    title: "Slope of ST Segment",
+    emoji: "⛰️",
+    type: "Valid Values:",
+    details: ["Upsloping", "Flat", "Downsloping"],
+  },
+  {
+    title: "Maximum Heart Rate Achieved",
+    emoji: "❤️",
+    type: "Valid Range:",
+    details: ["60 - 220 bpm"],
+  },
+  {
+    title: "Number of Major Blood Vessels",
+    emoji: "🩸",
+    type: "Valid Range:",
+    details: ["0 - 3"],
+  },
+];
 
 const Landing2 = () => {
   const name = localStorage.getItem("name");
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="p-8 flex flex-col md:flex-row items-center justify-center">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="min-h-screen bg-gray-50"
+    >
+      {/* Welcome Section */}
+      <div className="p-6 md:p-10 flex flex-col md:flex-row items-center justify-center">
         <div className="max-w-xl md:w-1/2 p-4 md:p-8">
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-            <span role="img" aria-label="wave">👋</span> Welcome, <span className="text-blue-500">{name || "Guest"}</span>!
+            👋 Welcome, <span className="text-blue-500">{name || "Guest"}</span>!
           </h1>
           <p className="text-lg text-gray-500 mb-8">
-            To begin your heart health analysis, make sure you have the following medical reports ready. They help us provide the most accurate prediction.
+            To begin your heart health analysis, make sure you have the following medical reports ready.
           </p>
-          <Link to="/dashboard" className="bg-gradient-to-r from-indigo-500 to-pink-500 text-white text-base px-6 py-3 rounded-full shadow-md hover:shadow-lg transition-all">
-            Predict Heart Disease
-          </Link>
-          <br />
-          <br />
-          <Link to="/health" className="bg-gradient-to-r from-indigo-500 to-pink-500 text-white text-base px-6 py-3 rounded-full shadow-md hover:shadow-lg transition-all">
-            Check My Health
-          </Link>
+          <div className="flex flex-col gap-4 md:flex-row">
+            <Link
+              to="/dashboard"
+              className="bg-gradient-to-r from-indigo-500 to-pink-500 text-white px-6 py-3 rounded-full shadow-md hover:shadow-xl transition-all"
+            >
+              Predict Heart Disease
+            </Link>
+            <Link
+              to="/health"
+              className="bg-gradient-to-r from-red-500 to-orange-500 text-white px-6 py-3 rounded-full shadow-md hover:shadow-xl transition-all"
+            >
+              Check My Health
+            </Link>
+          </div>
         </div>
-        <div className="md:w-1/2 flex justify-center p-4">
+        <div className="md:w-1/2 flex justify-center p-4 mt-6 md:mt-0">
           <HeartModel />
         </div>
       </div>
 
+      {/* Report Section */}
       <div className="bg-white py-12 px-4 md:px-16">
         <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
-          <span role="img" aria-label="pencil">📝</span> Required <span className="text-green-600">Medical</span> Reports
+          📝 Required <span className="text-green-600">Medical</span> Reports
         </h2>
-        <p className="text-lg text-gray-400 mb-8">
-          Please ensure the following reports are available before proceeding with the heart disease prediction.
+        <p className="text-lg text-gray-400 mb-10">
+          Ensure the following reports are available before predicting heart disease.
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {[
-            {
-              title: "Chest Pain Type",
-              emoji: "❤️",
-              type: "Valid Types:",
-              details: ["Typical Angina", "Atypical Angina", "Non-Anginal Pain", "Asymptomatic"]
-            },
-            {
-              title: "Resting ECG Results",
-              emoji: "🧑‍⚕️",
-              type: "Valid Values:",
-              details: ["Normal", "ST-T wave abnormality", "Left ventricular hypertrophy"]
-            },
-            {
-              title: "Thalassemia Test Result",
-              emoji: "🧬",
-              type: "Valid Values:",
-              details: ["Normal", "Fixed Defect", "Reversible Defect"]
-            },
-            {
-              title: "Resting Blood Pressure",
-              emoji: "💉",
-              type: "Valid Range:",
-              details: ["80 - 200 mmHg"]
-            },
-            {
-              title: "Cholesterol Level",
-              emoji: "💪",
-              type: "Valid Range:",
-              details: ["100 - 500 mg/dL"]
-            },
-            {
-              title: "ST Depression",
-              emoji: "📉",
-              type: "Valid Range:",
-              details: ["0.0 - 6.0 mm"]
-            },
-            {
-              title: "Fasting Blood Sugar",
-              emoji: "🧠",
-              type: "Valid Values:",
-              details: ["Normal", "High"]
-            },
-            {
-              title: "Exercise-Induced Angina",
-              emoji: "🏃‍♂️",
-              type: "Valid Values:",
-              details: ["No", "Yes"]
-            },
-            {
-              title: "Slope of ST Segment",
-              emoji: "⛰️",
-              type: "Valid Values:",
-              details: ["Upsloping", "Flat", "Downsloping"]
-            },
-            {
-              title: "Maximum Heart Rate Achieved",
-              emoji: "❤️",
-              type: "Valid Range:",
-              details: ["60 - 220 bpm"]
-            },
-            {
-              title: "Number of Major Blood Vessels",
-              emoji: "🩸",
-              type: "Valid Range:",
-              details: ["0 - 3"]
-            },
-          ].map((item, idx) => (
-            <div key={idx} className="bg-gray-50 p-4 rounded-xl shadow border border-gray-100">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {reportItems.map((item, idx) => (
+            <motion.div
+              key={idx}
+              whileHover={{ scale: 1.05 }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: idx * 0.05 }}
+              viewport={{ once: true }}
+              className="bg-gray-50 p-6 rounded-xl shadow border border-gray-100 hover:shadow-lg transition-all"
+            >
               <h3 className="text-lg font-semibold text-gray-800 mb-2">
                 <span className="mr-1">{item.emoji}</span> {item.title}
               </h3>
@@ -116,11 +140,11 @@ const Landing2 = () => {
                   <li key={i}>{d}</li>
                 ))}
               </ul>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

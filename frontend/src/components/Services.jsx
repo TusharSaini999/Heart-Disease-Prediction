@@ -15,7 +15,7 @@ export default function Services() {
         <p className="mb-4 max-w-[485px] text-para">
         We are dedicated to safeguarding your heart health with advanced AI technology. Our heart attack detection system provides real-time risk assessment, accurate predictions, personalized insights, and 24/7 monitoring. Empowering you with early detection for a healthier tomorrow.
         </p>
-        <Button title="Get Started" Icon={FaWhatsapp} />
+      
       </div>
 
       <div className="max-h-[560px] max-w-[522px]">

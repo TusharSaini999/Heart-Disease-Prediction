@@ -1,7 +1,9 @@
 import React from "react";
 import { FaAngleRight, FaWhatsapp } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 export default function Checknow() {
+  const navigate = useNavigate();
   return (
     <div className="mx-auto mb-[130px] max-w-screen-xl px-3 pt-[80px] md:mb-[213px] md:pt-[148px]">
       <p className="mb-3 text-center font-poppins text-[22px] font-medium text-secondary">
@@ -15,7 +17,7 @@ export default function Checknow() {
         Our AI-driven heart attack prediction system analyzes critical health data to detect early warning signs, empowering you and your healthcare team to take preventive action before a crisis occurs.
         </p>
 
-        <button className="flex items-center gap-2 rounded-full bg-white px-5 py-2 text-lg font-medium text-primary-start shadow-[0px_8px_23px_0px_rgba(65,132,247,0.24)] transition hover:-rotate-3 md:px-7 md:py-4">
+        <button onClick={()=>{navigate("/dashboard")}} className="flex items-center gap-2 rounded-full bg-white px-5 py-2 text-lg font-medium text-primary-start shadow-[0px_8px_23px_0px_rgba(65,132,247,0.24)] transition hover:-rotate-3 md:px-7 md:py-4">
           <FaAngleRight className="size-6" />
           Get Started!
         </button>
