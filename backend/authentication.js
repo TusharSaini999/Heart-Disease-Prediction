@@ -8,13 +8,21 @@ const multer = require("multer");
 const sharp = require("sharp"); // Image processing library
 
 const router = express.Router();
-///curl -X POST "http://localhost:4000/auth/signup" -H "Content-Type: application/json" -d "{\"name\":\"John Doe\",\"email\":\"johndoe@esamle.com\",\"mobile_no\":\"9877548210\",\"dob\":\"2000-05-15\",\"gender\":1,\"password\":\"12345578\"}"
+///curl -X POST "http://localhost:4000/auth/signup" -H "Content-Type: application/json" -d "{\"name\":\"John Doe\",\"email\":\"tushara@gmail.com\",\"mobile_no\":\"8874546210\",\"dob\":\"2000-05-15\",\"gender\":1,\"password\":\"12345578\"}"
 router.post("/signup", async (req, res) => {
   try {
     const { name, email, mobile_no, dob, gender, password } = req.body;
 
     if (!name || !email || !mobile_no || !dob || gender === undefined || !password) {
       return res.status(400).json({ error: "All fields are required!" });
+    }
+
+    // Check if DOB is in the future
+    const currentDate = new Date();
+    const dobDate = new Date(dob);
+
+    if (dobDate > currentDate) {
+      return res.status(400).json({ error: "Date of birth cannot be in the future!" });
     }
 
     if (!/^\d{10}$/.test(mobile_no)) {
@@ -27,6 +35,11 @@ router.post("/signup", async (req, res) => {
 
     if (password.length < 8) {
       return res.status(400).json({ error: "Password must be at least 8 characters long!" });
+    }
+
+    const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+    if (!gmailRegex.test(email)) {
+      return res.status(400).json({ error: "Only valid Gmail addresses are allowed!" });
     }
 
     db.query("SELECT * FROM users WHERE email = ?", [email], async (err, emailResults) => {
@@ -60,7 +73,11 @@ router.post("/signup", async (req, res) => {
 
           const token = jwt.sign({ userId: result.insertId, email }, process.env.JWT_SECRET, { expiresIn: "7d" });
 
-          res.status(201).json({ message: "User registered successfully!", token });
+          res.status(201).json({
+            message: "User registered successfully!",
+            Name: name,
+            token
+          });
         });
       });
     });
@@ -70,7 +87,9 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-//curl -X POST "http://localhost:4000/auth/login" -H "Content-Type: application/json" -d "{\"email\":\"johndoe@example.com\",\"password\":\"12345678\"}"
+
+
+//curl -X POST "http://localhost:4000/auth/login" -H "Content-Type: application/json" -d "{\"email\":\"tusharsaini@gmail.com\",\"password\":\"12345678\"}"
 
 
 // Login API 
@@ -86,7 +105,7 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ error: "Password must be at least 8 characters long!" });
     }
 
-    const sql = "SELECT id, email, password FROM users WHERE email = ?";
+    const sql = "SELECT id,name, email, password FROM users WHERE email = ?";
     db.query(sql, [email], async (err, results) => {
       if (err) {
         console.error("Database Error:", err);
@@ -106,7 +125,7 @@ router.post("/login", async (req, res) => {
 
       const token = jwt.sign({ userId: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: "7d" });
 
-      res.status(200).json({ message: "Login successful!", token });
+      res.status(200).json({ message: "Login successful!", Name: user.name, token });
     });
   } catch (error) {
     console.error("Login Error:", error);
@@ -144,13 +163,13 @@ router.get("/profile", verifyToken, (req, res) => {
 
     const user = results[0];
 
-    
+
     user.gender = user.gender === 0 ? "Female" : "Male";
 
-    
+
     user.age = calculateAge(user.dob);
 
-    
+
     if (user.profile_photo) {
       user.profile_photo = `data:image/jpeg;base64,${user.profile_photo.toString("base64")}`;
     }
@@ -180,7 +199,15 @@ router.put("/update-profile", verifyToken, upload.single("image"), async (req, r
     if (!password) {
       return res.status(400).json({ error: "Password is required to update profile!" });
     }
+    // Check if DOB is in the future
+    if (dob) {
+      const currentDate = new Date();
+      const dobDate = new Date(dob);
 
+      if (dobDate > currentDate) {
+        return res.status(400).json({ error: "Date of birth cannot be in the future!" });
+      }
+    }
     const sqlSelect = "SELECT password FROM users WHERE id = ?";
     db.query(sqlSelect, [userId], async (err, results) => {
       if (err) {
@@ -201,8 +228,8 @@ router.put("/update-profile", verifyToken, upload.single("image"), async (req, r
 
       if (image) {
         image = await sharp(image)
-          .resize(200, 200) 
-          .jpeg({ quality: 70 }) 
+          .resize(200, 200)
+          .jpeg({ quality: 70 })
           .toBuffer();
       }
 
@@ -281,7 +308,7 @@ router.put("/update-profile", verifyToken, upload.single("image"), async (req, r
 
 
 ///Get Age and Gender
-///curl -X GET "http://localhost:4000/auth/user-info" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoiam9obmRvZUBleGFtcGxlLmNvbSIsImlhdCI6MTc0MjQ2NDU4OSwiZXhwIjoxNzQzMDY5Mzg5fQ.NDuh8OVqV4kM6woCC8BrzXE40T7rdVBLLauGNyyoOLY"
+///curl -X GET "http://localhost:4000/auth/user-info" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoidHVzaGFyc2FpQGdtYWlsLmNvbSIsImlhdCI6MTc0NjcyMjM3NCwiZXhwIjoxNzQ3MzI3MTc0fQ.Y_QiG8dMRdGeRphbxITVN9WICXqmT7TO1DZSnPGddTg"
 
 
 router.get("/user-info", verifyToken, (req, res) => {
@@ -300,7 +327,7 @@ router.get("/user-info", verifyToken, (req, res) => {
 
     const user = results[0];
 
-    
+
     const age = calculateAge(user.dob);
 
     const gender = user.gender;

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 const Signup = () => {
@@ -15,6 +15,13 @@ const Signup = () => {
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate("/landing2");
+    }
+  }, []);
+  
   const handleChange = (e) => {
     let { name, value } = e.target;
 
@@ -46,18 +53,49 @@ const Signup = () => {
     return newErrors;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length === 0) {
-      
-      navigate("/login2");
+      try {
+        const payload = {
+          name: formData.name,
+          email: formData.email,
+          mobile_no: formData.mobile,
+          dob: formData.dob,
+          gender: formData.gender === "Male" ? "1" : "0",
+          password: formData.password,
+        };
+  
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/auth/signup`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+  
+        const data = await response.json();
+  
+        if (!response.ok) {
+          setErrors({ general: data.error || "Signup failed" });
+          return;
+        }
+  
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("name",data.Name); // Save token if needed
+        console.log("Signup successful!");
+        navigate("/landing2"); // Redirect after signup
+      } catch (err) {
+        console.error("Signup error:", err);
+        setErrors({ general: "Something went wrong. Try again later." });
+      }
     } else {
       setErrors(validationErrors);
     }
   };
-
+  
   return (
     <div
       className="flex items-center justify-center h-screen bg-cover bg-center"
@@ -139,6 +177,7 @@ const Signup = () => {
             required
           />
           {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>} 
+          {errors.general && <p className="text-red-500 text-sm mb-2">{errors.general}</p>}
 
           <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded-lg">
             Sign Up

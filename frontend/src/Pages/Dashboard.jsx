@@ -1,22 +1,60 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from "react-router-dom";
+
+
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
 
 export default function HeartDiseaseForm() {
   const [formData, setFormData] = useState({
     age: '', sex: '', cp: '', trestbps: '', chol: '', fbs: '', restecg: '',
-    thalach: '', exang: '', oldpeak: '', slope: '', ca: '', thal: '', target_multi: ''
+    thalach: '', exang: '', oldpeak: '', slope: '', ca: '', thal: '',
   });
+  const [prediction, setPrediction] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
+
+  // Fetch user info (age and gender) on component mount
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      const token = localStorage.getItem("token");
+      try {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/auth/user-info`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setFormData((prev) => ({
+            ...prev,
+            age: data.age,
+            sex: data.gender,
+          }));
+        } else {
+          setError('Failed to fetch user info.');
+        }
+      } catch (err) {
+        setError('A network error occurred while fetching user info.');
+      }
+    };
+
+    fetchUserInfo();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-   
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    navigate("/history");
+    setLoading(true);
+    setPrediction(null);
+    setError(null);
+  
     const parsedData = {
       age: Number(formData.age),
       sex: Number(formData.sex),
@@ -27,14 +65,45 @@ export default function HeartDiseaseForm() {
       restecg: Number(formData.restecg),
       thalach: Number(formData.thalach),
       exang: Number(formData.exang),
-      oldpeak: Number(formData.oldpeak),
+      oldpeak: parseFloat(formData.oldpeak),
       slope: Number(formData.slope),
       ca: Number(formData.ca),
       thal: Number(formData.thal),
-      target_multi: Number(formData.target_multi),
     };
-    console.log('Validated Form Data:', parsedData);
-    
+  
+    const token = localStorage.getItem("token");
+    const featuresArray = Object.values(parsedData).slice(0, 13); // Exclude target_multi
+  
+    try {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/ai`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ features: featuresArray })
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        setPrediction(data.predicted_class);
+      } else {
+        setError(data.error || 'Prediction failed.');
+      }
+    } catch (err) {
+      setError('A network error occurred while submitting the form.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const heartDiseaseTypes = {
+    0: "No heart disease",
+    1: "Coronary Artery Disease",
+    2: "Heart Failure",
+    3: "Arrhythmia",
+    4: "Valvular Heart Disease"
   };
 
   return (
@@ -56,6 +125,7 @@ export default function HeartDiseaseForm() {
           </select>
         </div>
 
+        
         <div className="flex flex-col">
           <label className="font-semibold mb-1">❤️ Chest Pain Type</label>
           <select name="cp" value={formData.cp} onChange={handleChange} className="border rounded px-3 py-2" required>
@@ -140,17 +210,6 @@ export default function HeartDiseaseForm() {
           </select>
         </div>
 
-        <div className="flex flex-col">
-          <label className="font-semibold mb-1">🩺 Heart Disease Type</label>
-          <select name="target_multi" value={formData.target_multi} onChange={handleChange} className="border rounded px-3 py-2" required>
-            <option value="">Select</option>
-            <option value="0">🟢 No Disease</option>
-            <option value="1">❤️ CAD</option>
-            <option value="2">💔 Heart Failure</option>
-            <option value="3">⚡ Arrhythmia</option>
-            <option value="4">🔧 Valve Disease</option>
-          </select>
-        </div>
 
         <div className="col-span-2 text-center">
           <button type="submit" className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold px-8 py-3 rounded-full hover:opacity-90 shadow-lg">
@@ -158,6 +217,24 @@ export default function HeartDiseaseForm() {
           </button>
         </div>
       </form>
+
+      {loading && (
+        <div className="col-span-2 text-center mt-4 text-blue-700 font-semibold">
+          🔄 Predicting, please wait...
+        </div>
+      )}
+
+      {prediction !== null && (
+        <div className="col-span-2 mt-4 text-center bg-green-100 text-green-800 px-4 py-3 rounded shadow">
+          ✅ Predicted Heart Disease Type: <strong>{heartDiseaseTypes[prediction]}</strong>
+        </div>
+      )}
+
+      {error && (
+        <div className="col-span-2 mt-4 text-center bg-red-100 text-red-800 px-4 py-3 rounded shadow">
+          ❌ {error}
+        </div>
+      )}
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
@@ -22,13 +22,43 @@ const LoginPage = () => {
     return newErrors;
   };
 
-  const handleSubmit = (e) => {
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate("/landing2");
+    }
+  }, []);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validateForm();
-
+  
     if (Object.keys(validationErrors).length === 0) {
-      console.log("User Logged In");
-      navigate("/login2");
+      try {
+        const response = await fetch(import.meta.env.VITE_BACKEND_URL + "/auth/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        });
+
+        const data = await response.json();
+  
+        if (!response.ok) {
+          setErrors({ general: data.error || "Login failed" });
+          return;
+        }
+  
+        // Store token in localStorage or cookie
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("name",data.Name);
+        console.log("Login successful!");
+        navigate("/landing2");
+      } catch (err) {
+        console.error("Login error:", err);
+        setErrors({ general: "Something went wrong. Try again later." });
+      }
     } else {
       setErrors(validationErrors);
     }
@@ -64,13 +94,14 @@ const LoginPage = () => {
             required
           />
           {errors.password && <p className="text-red-500 text-sm mb-2">{errors.password}</p>}
+          {errors.general && <p className="text-red-500 text-sm mb-2">{errors.general}</p>}
 
           <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded-lg">
             Log in
           </button>
         </form>
         <p className="text-center text-gray-700 mt-4">
-          Don't have an account?{" "}
+          Don&apos;t have an account?{" "}
           <Link to="/signup" className="text-blue-500">
             Sign Up
           </Link>
