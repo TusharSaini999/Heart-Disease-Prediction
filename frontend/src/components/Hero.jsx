@@ -1,6 +1,9 @@
 import { Button } from "./ui";
+import { useNavigate } from "react-router-dom";
+
 
 export default function Hero() {
+  const navigate = useNavigate();
   return (
     <div className="pd:pb-[90px] mx-auto flex max-w-screen-xl flex-col items-center justify-between gap-4 px-3 pb-10 pt-[80px] md:flex-row lg:gap-[72px] lg:px-0 lg:pt-[108px]">
       <div className="mt-10 flex flex-col items-start gap-6 md:mt-0">
@@ -14,7 +17,7 @@ export default function Hero() {
         <p className="max-w-[452px] text-para">
           Enter Your Heart Details And Get An AI-Driven Heart Disease Risk Assessment In Seconds.
         </p>
-        <Button title="Get Started Now" />
+        <Button title="Get Started Now" onClick={() => navigate("/dashboard")} />
       </div>
 
       <div className="hidden md:block max-h-[506px] max-w-[678px]">
