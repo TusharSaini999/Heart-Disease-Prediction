@@ -120,17 +120,17 @@ const LoginPage = () => {
         </form>
 
         {/* Back to Homepage and Sign Up links side-by-side */}
-        <div className="flex justify-between items-center mt-6 text-sm text-gray-700">
-          <Link to="/" className="text-blue-600 font-semibold underline">
-            Home
-          </Link>
-          <span>
-            Don&apos;t have an account?{" "}
-            <Link to="/signup" className="text-blue-600 font-semibold underline">
-              Sign Up
-            </Link>
-          </span>
-        </div>
+        <div className="flex justify-between items-center mt-6 text-sm sm:text-xs text-gray-700 flex-col sm:flex-row gap-2 sm:gap-0">
+  <Link to="/" className="text-blue-600 font-semibold underline">
+    Home
+  </Link>
+  <span className="text-center">
+    Don&apos;t have an account?{" "}
+    <Link to="/signup" className="text-blue-600 font-semibold underline">
+      Sign Up
+    </Link>
+  </span>
+</div>
       </div>
     </div>
   );
