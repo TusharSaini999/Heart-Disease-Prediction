@@ -1,4 +1,4 @@
-CREATE TABLE `histery` (
+CREATE TABLE `history` (
   `id` int NOT NULL AUTO_INCREMENT,
   `uid` int NOT NULL,
   `age` int NOT NULL,
@@ -19,20 +19,20 @@ CREATE TABLE `histery` (
   PRIMARY KEY (`id`),
   KEY `userst_table_key_idx` (`uid`),
   CONSTRAINT `userst_table_key` FOREIGN KEY (`uid`) REFERENCES `users` (`id`),
-  CONSTRAINT `histery_chk_1` CHECK ((`age` between 20 and 90)),
-  CONSTRAINT `histery_chk_10` CHECK ((`oldpeak` between 0.0 and 6.0)),
-  CONSTRAINT `histery_chk_11` CHECK ((`slope` in (0,1,2))),
-  CONSTRAINT `histery_chk_12` CHECK ((`ca` between 0 and 3)),
-  CONSTRAINT `histery_chk_13` CHECK ((`thal` in (1,2,3))),
-  CONSTRAINT `histery_chk_14` CHECK ((`target_multi` in (0,1,2,3,4))),
-  CONSTRAINT `histery_chk_2` CHECK ((`sex` in (0,1))),
-  CONSTRAINT `histery_chk_3` CHECK ((`cp` in (0,1,2,3))),
-  CONSTRAINT `histery_chk_4` CHECK ((`trestbps` between 80 and 200)),
-  CONSTRAINT `histery_chk_5` CHECK ((`chol` between 100 and 500)),
-  CONSTRAINT `histery_chk_6` CHECK ((`fbs` in (0,1))),
-  CONSTRAINT `histery_chk_7` CHECK ((`restecg` in (0,1,2))),
-  CONSTRAINT `histery_chk_8` CHECK ((`thalach` between 60 and 220)),
-  CONSTRAINT `histery_chk_9` CHECK ((`exang` in (0,1)))
+  CONSTRAINT `history_chk_1` CHECK ((`age` between 20 and 90)),
+  CONSTRAINT `history_chk_10` CHECK ((`oldpeak` between 0.0 and 6.0)),
+  CONSTRAINT `history_chk_11` CHECK ((`slope` in (0,1,2))),
+  CONSTRAINT `history_chk_12` CHECK ((`ca` between 0 and 3)),
+  CONSTRAINT `history_chk_13` CHECK ((`thal` in (1,2,3))),
+  CONSTRAINT `history_chk_14` CHECK ((`target_multi` in (0,1,2,3,4))),
+  CONSTRAINT `history_chk_2` CHECK ((`sex` in (0,1))),
+  CONSTRAINT `history_chk_3` CHECK ((`cp` in (0,1,2,3))),
+  CONSTRAINT `history_chk_4` CHECK ((`trestbps` between 80 and 200)),
+  CONSTRAINT `history_chk_5` CHECK ((`chol` between 100 and 500)),
+  CONSTRAINT `history_chk_6` CHECK ((`fbs` in (0,1))),
+  CONSTRAINT `history_chk_7` CHECK ((`restecg` in (0,1,2))),
+  CONSTRAINT `history_chk_8` CHECK ((`thalach` between 60 and 220)),
+  CONSTRAINT `history_chk_9` CHECK ((`exang` in (0,1)))
 );
 
 
