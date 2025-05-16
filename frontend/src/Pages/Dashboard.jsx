@@ -1,5 +1,3 @@
-// Enhanced React Form with Responsiveness, UI Improvements, and Animations
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -118,7 +116,7 @@ export default function HeartDiseaseForm() {
         onSubmit={handleSubmit}
         className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-5xl mx-auto backdrop-blur-md bg-white/80 p-6 sm:p-10 rounded-2xl shadow-2xl"
       >
-        <h2 className="col-span-1 sm:col-span-2 text-3xl font-bold text-center text-indigo-700">💓 Heart Disease Risk Form</h2>
+        <h2 className="col-span-1 sm:col-span-2 text-2xl sm:text-3xl font-bold text-center text-indigo-700">💓 Heart Disease Risk Form</h2>
 
         {Object.entries({
           age: '🎂 Age (20-90)',
@@ -144,7 +142,7 @@ export default function HeartDiseaseForm() {
             viewport={{ once: true }}
           >
             <label className="font-semibold mb-1">{label}</label>
-            {name === 'sex' || name === 'cp' || name === 'fbs' || name === 'restecg' || name === 'exang' || name === 'slope' || name === 'thal' ? (
+            {['sex', 'cp', 'fbs', 'restecg', 'exang', 'slope', 'thal'].includes(name) ? (
               <select
                 name={name}
                 value={formData[name]}
@@ -152,43 +150,36 @@ export default function HeartDiseaseForm() {
                 className="border rounded px-3 py-2"
                 required
               >
-                {/* Add appropriate options here based on field */}
+                <option value="">Select</option>
                 {name === 'sex' && <>
-                  <option value="">Select</option>
                   <option value="0">♀️ Female</option>
                   <option value="1">♂️ Male</option>
                 </>}
                 {name === 'cp' && <>
-                  <option value="">Select</option>
                   <option value="0">💥 Typical Angina</option>
                   <option value="1">🔥 Atypical Angina</option>
                   <option value="2">😣 Non-Anginal Pain</option>
                   <option value="3">😐 Asymptomatic</option>
                 </>}
                 {name === 'fbs' && <>
-                  <option value="">Select</option>
                   <option value="0">🟢 Normal</option>
                   <option value="1">🔴 High</option>
                 </>}
                 {name === 'restecg' && <>
-                  <option value="">Select</option>
                   <option value="0">✅ Normal</option>
                   <option value="1">⚠️ ST-T Abnormal</option>
                   <option value="2">🧠 LV Hypertrophy</option>
                 </>}
                 {name === 'exang' && <>
-                  <option value="">Select</option>
                   <option value="0">❌ No</option>
                   <option value="1">✔️ Yes</option>
                 </>}
                 {name === 'slope' && <>
-                  <option value="">Select</option>
                   <option value="0">↗️ Upsloping</option>
                   <option value="1">➡️ Flat</option>
                   <option value="2">↘️ Downsloping</option>
                 </>}
                 {name === 'thal' && <>
-                  <option value="">Select</option>
                   <option value="1">✅ Normal</option>
                   <option value="2">🛑 Fixed Defect</option>
                   <option value="3">🔄 Reversible Defect</option>
@@ -196,7 +187,8 @@ export default function HeartDiseaseForm() {
               </select>
             ) : (
               <input
-                type={name === 'oldpeak' ? 'number' : 'number'}
+                type="number"
+                step={name === 'oldpeak' ? "0.1" : "1"}
                 name={name}
                 value={formData[name]}
                 onChange={handleChange}
@@ -212,31 +204,31 @@ export default function HeartDiseaseForm() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             type="submit"
-            className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold px-8 py-3 rounded-full shadow-lg"
+            className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold px-8 py-3 rounded-full shadow-lg w-full sm:w-auto"
           >
             🚀 Submit
           </motion.button>
         </div>
 
         {loading && (
-          <div className="col-span-2 text-center mt-4 text-blue-700 font-semibold animate-pulse">
+          <div className="col-span-1 sm:col-span-2 text-center mt-4 text-blue-700 font-semibold animate-pulse">
             🔄 Predicting, please wait...
           </div>
         )}
 
         {prediction !== null && (
           <motion.div
-            className="col-span-2 mt-4 text-center bg-green-100 text-green-800 px-4 py-3 rounded shadow"
+            className="col-span-1 sm:col-span-2 mt-4 text-center bg-green-100 text-green-800 px-4 py-3 rounded shadow text-lg sm:text-xl"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >
-            ✅ Predicted Heart Disease Type: <strong>{heartDiseaseTypes[prediction]}</strong>
+            ✅ <span className="font-medium">Predicted Heart Disease Type:</span> <strong>{heartDiseaseTypes[prediction]}</strong>
           </motion.div>
         )}
 
         {error && (
           <motion.div
-            className="col-span-2 mt-4 text-center bg-red-100 text-red-800 px-4 py-3 rounded shadow"
+            className="col-span-1 sm:col-span-2 mt-4 text-center bg-red-100 text-red-800 px-4 py-3 rounded shadow text-base"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >
