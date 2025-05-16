@@ -9,7 +9,7 @@ const History = () => {
       try {
         const token = localStorage.getItem("token");
   
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/ai/histery`, {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/ai/history`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,

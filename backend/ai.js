@@ -78,7 +78,7 @@ router.post("/", verifyToken, async (req, res) => {
 
         // Insert prediction into database
         const query = `
-            INSERT INTO histery (uid, age, sex, cp, trestbps, chol, fbs, restecg, thalach, exang, oldpeak, slope, ca, thal, target_multi)
+            INSERT INTO history (uid, age, sex, cp, trestbps, chol, fbs, restecg, thalach, exang, oldpeak, slope, ca, thal, target_multi)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
         const values = [uid, ...features, target_multi];
@@ -99,9 +99,9 @@ router.post("/", verifyToken, async (req, res) => {
     }
 });
 
-///curl -X GET "http://localhost:4000/ai/histery" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoiam9obmRvZUBleGFtcGxlLmNvbSIsImlhdCI6MTc0MjQ2NDU4OSwiZXhwIjoxNzQzMDY5Mzg5fQ.NDuh8OVqV4kM6woCC8BrzXE40T7rdVBLLauGNyyoOLY"
+///curl -X GET "http://localhost:4000/ai/history" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoiam9obmRvZUBleGFtcGxlLmNvbSIsImlhdCI6MTc0MjQ2NDU4OSwiZXhwIjoxNzQzMDY5Mzg5fQ.NDuh8OVqV4kM6woCC8BrzXE40T7rdVBLLauGNyyoOLY"
 
-router.get("/histery", verifyToken, async (req, res) => {
+router.get("/history", verifyToken, async (req, res) => {
     try {
         const uid = req.user?.userId;
 
@@ -109,7 +109,7 @@ router.get("/histery", verifyToken, async (req, res) => {
             return res.status(401).json({ error: "Unauthorized: User ID missing in token" });
         }
 
-        const query = `SELECT * FROM histery WHERE uid = ? ORDER BY created_at DESC`;
+        const query = `SELECT * FROM history WHERE uid = ? ORDER BY created_at DESC`;
 
         db.query(query, [uid], (err, results) => {
             if (err) {
