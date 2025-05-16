@@ -5,6 +5,7 @@ const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const validateForm = () => {
@@ -34,6 +35,7 @@ const LoginPage = () => {
     const validationErrors = validateForm();
 
     if (Object.keys(validationErrors).length === 0) {
+      setLoading(true);
       try {
         const response = await fetch(
           import.meta.env.VITE_BACKEND_URL + "/auth/login",
@@ -50,6 +52,7 @@ const LoginPage = () => {
 
         if (!response.ok) {
           setErrors({ general: data.error || "Login failed" });
+          setLoading(false);
           return;
         }
 
@@ -59,6 +62,7 @@ const LoginPage = () => {
       } catch (err) {
         console.error("Login error:", err);
         setErrors({ general: "Something went wrong. Try again later." });
+        setLoading(false);
       }
     } else {
       setErrors(validationErrors);
@@ -113,24 +117,50 @@ const LoginPage = () => {
 
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold"
+            className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold flex justify-center items-center"
+            disabled={loading}
           >
-            Log in
+            {loading ? (
+              <>
+                <svg
+                  className="animate-spin h-5 w-5 mr-2 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v8H4z"
+                  ></path>
+                </svg>
+                Logging in...
+              </>
+            ) : (
+              "Log in"
+            )}
           </button>
         </form>
 
-        {/* Back to Homepage and Sign Up links side-by-side */}
-        <div className="flex justify-between items-center mt-6 text-sm sm:text-xs text-gray-700 flex-col sm:flex-row gap-2 sm:gap-0">
-  <Link to="/" className="text-blue-600 font-semibold underline">
-    Home
-  </Link>
-  <span className="text-center">
-    Don&apos;t have an account?{" "}
-    <Link to="/signup" className="text-blue-600 font-semibold underline">
-      Sign Up
-    </Link>
-  </span>
-</div>
+        <div className="flex justify-between items-center mt-6 text-sm text-gray-700">
+          <Link to="/" className="text-blue-600 font-semibold underline">
+            Home
+          </Link>
+          <span>
+            Don&apos;t have an account?{" "}
+            <Link to="/signup" className="text-blue-600 font-semibold underline">
+              Sign Up
+            </Link>
+          </span>
+        </div>
       </div>
     </div>
   );
