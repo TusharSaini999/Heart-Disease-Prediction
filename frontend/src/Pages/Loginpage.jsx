@@ -150,17 +150,19 @@ const LoginPage = () => {
           </button>
         </form>
 
-        <div className="flex justify-between items-center mt-6 text-sm text-gray-700">
+        <div className="flex flex-col sm:flex-row justify-between items-center mt-6 text-sm text-gray-700 gap-2 sm:gap-0 text-center sm:text-left">
           <Link to="/" className="text-blue-600 font-semibold underline">
             Home
           </Link>
-          <span>
+          <div className="whitespace-nowrap">
             Don&apos;t have an account?{" "}
             <Link to="/signup" className="text-blue-600 font-semibold underline">
               Sign Up
             </Link>
-          </span>
+          </div>
         </div>
+
+
       </div>
     </div>
   );

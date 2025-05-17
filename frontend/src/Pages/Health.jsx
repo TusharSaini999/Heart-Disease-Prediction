@@ -1,5 +1,25 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { motion } from "framer-motion";
+
+const containerVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { 
+      staggerChildren: 0.15,
+      when: "beforeChildren",
+      ease: "easeOut",
+      duration: 0.6,
+    } 
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+};
 
 const Health = () => {
   const [formData, setFormData] = useState({
@@ -17,7 +37,7 @@ const Health = () => {
 
   const [errors, setErrors] = useState({});
   const [apiResponse, setApiResponse] = useState(null);
-  const [loading, setLoading] = useState(false); // for loading spinner
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -75,227 +95,168 @@ const Health = () => {
   };
 
   return (
-    <div
+    <motion.div
       className="min-h-screen bg-cover bg-center flex items-center justify-center p-4"
       style={{
         backgroundImage: `url('https://images.unsplash.com/photo-1526256262350-7da7584cf5eb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80')`,
       }}
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
     >
       <div className="max-w-5xl w-full p-8 md:p-10 bg-white bg-opacity-90 shadow-2xl rounded-2xl">
-        <h2 className="text-2xl md:text-3xl font-bold mb-6 text-center text-gray-800">
+        <motion.h2
+          className="text-2xl md:text-3xl font-bold mb-6 text-center text-gray-800"
+          variants={itemVariants}
+        >
           ❤️ Heart Health Assessment
-        </h2>
+        </motion.h2>
 
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* AGE */}
-          <div>
-            <label className="block font-semibold mb-1">What is your age?</label>
-            <input
-              type="number"
-              name="age"
-              value={formData.age}
-              onChange={handleChange}
-              className="w-full border rounded px-3 py-2"
-              placeholder="Enter your age"
-            />
-            {errors.age && <p className="text-red-500 text-sm">{errors.age}</p>}
-          </div>
+        <motion.form
+          onSubmit={handleSubmit}
+          className="grid grid-cols-1 md:grid-cols-2 gap-6"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+        >
+          {[
+            {
+              label: "What is your age?",
+              type: "number",
+              name: "age",
+              placeholder: "Enter your age",
+            },
+            {
+              label: "What is your gender?",
+              type: "select",
+              name: "gender",
+              options: ["Select Gender", "Male", "Female", "Other"],
+            },
+            {
+              label: "How often do you exercise in a week?",
+              type: "select",
+              name: "exerciseFrequency",
+              options: ["Select Frequency", "0", "1-2", "3-5", "5+"],
+              displayOptions: ["Select Frequency", "0 times", "1–2 times", "3–5 times", "More than 5 times"],
+            },
+            {
+              label: "Do you smoke?",
+              type: "select",
+              name: "smoke",
+              options: ["Select Option", "true", "false"],
+              displayOptions: ["Select Option", "Yes", "No"],
+            },
+            {
+              label: "How often do you eat fast food?",
+              type: "select",
+              name: "fastFoodFrequency",
+              options: ["Select Frequency", "Rarely", "Sometimes", "Often"],
+            },
+            {
+              label: "How would you describe your stress level?",
+              type: "select",
+              name: "stressLevel",
+              options: ["Select Level", "Low", "Moderate", "High"],
+            },
+            {
+              label: "How many hours of sleep do you get daily?",
+              type: "select",
+              name: "sleepHours",
+              options: ["Select Sleep Hours", "<5", "5-7", "7-9", ">9"],
+              displayOptions: ["Select Sleep Hours", "Less than 5 hours", "5–7 hours", "7–9 hours", "More than 9 hours"],
+            },
+            {
+              label: "Family history of heart disease?",
+              type: "select",
+              name: "familyHistory",
+              options: ["Select Option", "Yes", "No", "Not Sure"],
+            },
+            {
+              label: "Chest pain or discomfort?",
+              type: "select",
+              name: "chestPain",
+              options: ["Select Option", "true", "false"],
+              displayOptions: ["Select Option", "Yes", "No"],
+            },
+            {
+              label: "Blood pressure or diabetes?",
+              type: "select",
+              name: "bloodPressureOrDiabetes",
+              options: ["Select Option", "Yes", "No", "Not Sure"],
+            },
+          ].map(({ label, type, name, placeholder, options, displayOptions }, i) => (
+            <motion.div key={name} variants={itemVariants}>
+              <label className="block font-semibold mb-1">{label}</label>
+              {type === "number" ? (
+                <input
+                  type="number"
+                  name={name}
+                  value={formData[name]}
+                  onChange={handleChange}
+                  className="w-full border rounded px-3 py-2"
+                  placeholder={placeholder}
+                />
+              ) : (
+                <select
+                  name={name}
+                  value={formData[name]}
+                  onChange={handleChange}
+                  className="w-full border rounded px-3 py-2"
+                >
+                  {options.map((opt, idx) => (
+                    <option key={idx} value={opt === "Select Option" || opt === "Select Frequency" || opt === "Select Gender" || opt === "Select Level" || opt === "Select Sleep Hours" ? "" : opt}>
+                      {displayOptions ? displayOptions[idx] : opt}
+                    </option>
+                  ))}
+                </select>
+              )}
+              {errors[name] && <p className="text-red-500 text-sm">{errors[name]}</p>}
+            </motion.div>
+          ))}
 
-          {/* GENDER */}
-          <div>
-            <label className="block font-semibold mb-1">What is your gender?</label>
-            <select
-              name="gender"
-              value={formData.gender}
-              onChange={handleChange}
-              className="w-full border rounded px-3 py-2"
-            >
-              <option value="">Select Gender</option>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-              <option value="Other">Other</option>
-            </select>
-            {errors.gender && <p className="text-red-500 text-sm">{errors.gender}</p>}
-          </div>
-
-          {/* EXERCISE */}
-          <div>
-            <label className="block font-semibold mb-1">How often do you exercise in a week?</label>
-            <select
-              name="exerciseFrequency"
-              value={formData.exerciseFrequency}
-              onChange={handleChange}
-              className="w-full border rounded px-3 py-2"
-            >
-              <option value="">Select Frequency</option>
-              <option value="0">0 times</option>
-              <option value="1-2">1–2 times</option>
-              <option value="3-5">3–5 times</option>
-              <option value="5+">More than 5 times</option>
-            </select>
-            {errors.exerciseFrequency && <p className="text-red-500 text-sm">{errors.exerciseFrequency}</p>}
-          </div>
-
-          {/* SMOKING */}
-          <div>
-            <label className="block font-semibold mb-1">Do you smoke?</label>
-            <select
-              name="smoke"
-              value={formData.smoke}
-              onChange={handleChange}
-              className="w-full border rounded px-3 py-2"
-            >
-              <option value="">Select Option</option>
-              <option value="true">Yes</option>
-              <option value="false">No</option>
-            </select>
-            {errors.smoke && <p className="text-red-500 text-sm">{errors.smoke}</p>}
-          </div>
-
-          {/* FAST FOOD */}
-          <div>
-            <label className="block font-semibold mb-1">How often do you eat fast food?</label>
-            <select
-              name="fastFoodFrequency"
-              value={formData.fastFoodFrequency}
-              onChange={handleChange}
-              className="w-full border rounded px-3 py-2"
-            >
-              <option value="">Select Frequency</option>
-              <option value="Rarely">Rarely</option>
-              <option value="Sometimes">Sometimes</option>
-              <option value="Often">Often</option>
-            </select>
-            {errors.fastFoodFrequency && <p className="text-red-500 text-sm">{errors.fastFoodFrequency}</p>}
-          </div>
-
-          {/* STRESS */}
-          <div>
-            <label className="block font-semibold mb-1">How would you describe your stress level?</label>
-            <select
-              name="stressLevel"
-              value={formData.stressLevel}
-              onChange={handleChange}
-              className="w-full border rounded px-3 py-2"
-            >
-              <option value="">Select Level</option>
-              <option value="Low">Low</option>
-              <option value="Moderate">Moderate</option>
-              <option value="High">High</option>
-            </select>
-            {errors.stressLevel && <p className="text-red-500 text-sm">{errors.stressLevel}</p>}
-          </div>
-
-          {/* SLEEP */}
-          <div>
-            <label className="block font-semibold mb-1">How many hours of sleep do you get daily?</label>
-            <select
-              name="sleepHours"
-              value={formData.sleepHours}
-              onChange={handleChange}
-              className="w-full border rounded px-3 py-2"
-            >
-              <option value="">Select Sleep Hours</option>
-              <option value="<5">Less than 5 hours</option>
-              <option value="5-7">5–7 hours</option>
-              <option value="7-9">7–9 hours</option>
-              <option value=">9">More than 9 hours</option>
-            </select>
-            {errors.sleepHours && <p className="text-red-500 text-sm">{errors.sleepHours}</p>}
-          </div>
-
-          {/* FAMILY HISTORY */}
-          <div>
-            <label className="block font-semibold mb-1">Family history of heart disease?</label>
-            <select
-              name="familyHistory"
-              value={formData.familyHistory}
-              onChange={handleChange}
-              className="w-full border rounded px-3 py-2"
-            >
-              <option value="">Select Option</option>
-              <option value="Yes">Yes</option>
-              <option value="No">No</option>
-              <option value="Not Sure">Not Sure</option>
-            </select>
-            {errors.familyHistory && <p className="text-red-500 text-sm">{errors.familyHistory}</p>}
-          </div>
-
-          {/* CHEST PAIN */}
-          <div>
-            <label className="block font-semibold mb-1">Chest pain or discomfort?</label>
-            <select
-              name="chestPain"
-              value={formData.chestPain}
-              onChange={handleChange}
-              className="w-full border rounded px-3 py-2"
-            >
-              <option value="">Select Option</option>
-              <option value="true">Yes</option>
-              <option value="false">No</option>
-            </select>
-            {errors.chestPain && <p className="text-red-500 text-sm">{errors.chestPain}</p>}
-          </div>
-
-          {/* BLOOD PRESSURE OR DIABETES */}
-          <div>
-            <label className="block font-semibold mb-1">Blood pressure or diabetes?</label>
-            <select
-              name="bloodPressureOrDiabetes"
-              value={formData.bloodPressureOrDiabetes}
-              onChange={handleChange}
-              className="w-full border rounded px-3 py-2"
-            >
-              <option value="">Select Option</option>
-              <option value="Yes">Yes</option>
-              <option value="No">No</option>
-              <option value="Not Sure">Not Sure</option>
-            </select>
-            {errors.bloodPressureOrDiabetes && <p className="text-red-500 text-sm">{errors.bloodPressureOrDiabetes}</p>}
-          </div>
-
-          <button
+          <motion.button
             type="submit"
             className="col-span-1 md:col-span-2 bg-blue-500 hover:bg-blue-600 transition-all text-white font-semibold py-3 px-6 rounded-full mt-6"
+            variants={itemVariants}
           >
             {loading ? "Submitting..." : "Submit"}
-          </button>
-        </form>
+          </motion.button>
+        </motion.form>
 
         {/* Loading or Result */}
-        <div className="mt-8">
+        <motion.div className="mt-8" variants={itemVariants} initial="hidden" animate={apiResponse ? "visible" : "hidden"}>
           {!loading && apiResponse && (
             <div
-              className={`mt-8 p-6 border rounded-lg ${apiResponse.prediction?.possibleDiseases?.length === 0
-                  ? 'bg-green-100 border-green-400 text-green-800'
-                  : 'bg-orange-100 border-orange-400 text-orange-800'
-                }`}
+              className={`mt-8 p-6 border rounded-lg ${
+                apiResponse.prediction?.possibleDiseases?.length === 0
+                  ? "bg-green-100 border-green-400 text-green-800"
+                  : "bg-orange-100 border-orange-400 text-orange-800"
+              }`}
             >
               <h3 className="text-2xl font-bold mb-4">Prediction Result:</h3>
 
               <p className="text-lg mb-4">
-                <span className="font-semibold">At Risk:</span> {apiResponse.prediction?.atRisk}
+                <span className="font-semibold">At Risk:</span> {apiResponse.prediction?.atRisk ? "Yes" : "No"}
               </p>
 
-              {apiResponse.prediction?.possibleDiseases?.length > 0 ? (
+              {apiResponse.prediction?.possibleDiseases?.length > 0 && (
                 <div>
-                  <h4 className="text-xl font-semibold mb-2">Possible Diseases:</h4>
-                  <ul className="list-disc list-inside text-lg">
-                    {apiResponse.prediction.possibleDiseases.map((disease, index) => (
-                      <li key={index}>{disease}</li>
+                  <p className="font-semibold mb-2">Possible diseases:</p>
+                  <ul className="list-disc list-inside">
+                    {apiResponse.prediction.possibleDiseases.map((disease, idx) => (
+                      <li key={idx}>{disease}</li>
                     ))}
                   </ul>
                 </div>
-              ) : (
-                <p className="text-lg">No diseases predicted. 🎉</p>
               )}
+
+              {apiResponse.error && <p className="text-red-600 font-semibold mt-4">{apiResponse.error}</p>}
             </div>
           )}
-
-        </div>
-
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

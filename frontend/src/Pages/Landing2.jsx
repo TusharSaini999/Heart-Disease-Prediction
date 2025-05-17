@@ -102,7 +102,7 @@ const Landing2 = () => {
               to="/health"
               className="bg-gradient-to-r from-red-500 to-orange-500 text-white px-6 py-3 rounded-full shadow-md hover:shadow-xl transition-all"
             >
-              Check My Health
+              Check My Heart
             </Link>
           </div>
         </div>
@@ -117,7 +117,7 @@ const Landing2 = () => {
           📝 Required <span className="text-green-600">Medical</span> Reports
         </h2>
         <p className="text-lg text-gray-400 mb-10">
-          Ensure the following reports are available before predicting heart disease.
+          Ensure the following health details are provided before proceeding with the 'Predict Heart Disease' prediction.
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
