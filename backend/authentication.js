@@ -16,8 +16,6 @@ router.post("/signup", async (req, res) => {
     if (!name || !email || !mobile_no || !dob || gender === undefined || !password) {
       return res.status(400).json({ error: "All fields are required!" });
     }
-
-    // Check if DOB is in the future
     const currentDate = new Date();
     const dobDate = new Date(dob);
 

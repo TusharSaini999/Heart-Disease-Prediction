@@ -14,6 +14,7 @@ const Signup = () => {
   });
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -21,7 +22,7 @@ const Signup = () => {
       navigate("/landing2");
     }
   }, []);
-  
+
   const handleChange = (e) => {
     let { name, value } = e.target;
 
@@ -35,17 +36,17 @@ const Signup = () => {
     const newErrors = {};
     const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 
-    
+
     if (!emailPattern.test(formData.email)) {
       newErrors.email = "Please enter a valid email address.";
     }
 
- 
+
     if (formData.password !== formData.confirmPassword) {
       newErrors.password = "Passwords do not match.";
     }
 
-  
+
     if (formData.mobile.length > 10) {
       newErrors.mobile = "Mobile number cannot exceed 10 digits.";
     }
@@ -55,7 +56,8 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+    setLoading(true); // start loading
+
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length === 0) {
       try {
@@ -67,7 +69,7 @@ const Signup = () => {
           gender: formData.gender === "Male" ? "1" : "0",
           password: formData.password,
         };
-  
+
         const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/auth/signup`, {
           method: "POST",
           headers: {
@@ -75,18 +77,18 @@ const Signup = () => {
           },
           body: JSON.stringify(payload),
         });
-  
+
         const data = await response.json();
-  
+
         if (!response.ok) {
           setErrors({ general: data.error || "Signup failed" });
+          setLoading(false);
           return;
         }
-  
+
         localStorage.setItem("token", data.token);
-        localStorage.setItem("name",data.Name); // Save token if needed
-        console.log("Signup successful!");
-        navigate("/landing2"); // Redirect after signup
+        localStorage.setItem("name", data.Name);
+        navigate("/landing2");
       } catch (err) {
         console.error("Signup error:", err);
         setErrors({ general: "Something went wrong. Try again later." });
@@ -94,8 +96,11 @@ const Signup = () => {
     } else {
       setErrors(validationErrors);
     }
+
+    setLoading(false); // stop loading
   };
-  
+
+
   return (
     <div
       className="flex items-center justify-center h-screen bg-cover bg-center"
@@ -116,7 +121,7 @@ const Signup = () => {
             className="w-full mb-2 px-3 py-2 border rounded-lg"
             required
           />
-          
+
           <input
             type="email"
             name="email"
@@ -126,7 +131,7 @@ const Signup = () => {
             className="w-full mb-2 px-3 py-2 border rounded-lg"
             required
           />
-          {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>} 
+          {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
 
           <select
             name="gender"
@@ -176,12 +181,43 @@ const Signup = () => {
             className="w-full mb-4 px-3 py-2 border rounded-lg"
             required
           />
-          {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>} 
+          {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
           {errors.general && <p className="text-red-500 text-sm mb-2">{errors.general}</p>}
 
-          <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded-lg">
-            Sign Up
+          <button
+            type="submit"
+            className={`w-full py-2 rounded-lg text-white ${loading ? "bg-gray-400" : "bg-blue-500"}`}
+            disabled={loading}
+          >
+            {loading ? (
+              <div className="flex items-center justify-center">
+                <svg
+                  className="animate-spin h-5 w-5 mr-2 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                  ></path>
+                </svg>
+                Signing Up...
+              </div>
+            ) : (
+              "Sign Up"
+            )}
           </button>
+
         </form>
         <p className="text-center text-gray-700 mt-4">
           Already have an account? <Link to="/login" className="text-blue-500">Log in</Link>
