@@ -1,7 +1,7 @@
 # ❤️ Heart Disease Prediction Web-Based Solution
 
 ## 🔍 Overview
-The **Heart Disease Prediction** web application is an AI/ML-based solution designed to help users assess their risk of heart disease. The platform provides a simple login/signup system, user profiles, and history management for past predictions. The AI model, powered by **TensorFlow.js**, processes user input and predicts the likelihood of heart disease.
+The **Heart Disease Prediction** web application is an AI/ML-based solution designed to help users assess their risk of heart disease. The platform provides a simple login/signup system, user profiles, and history management for past predictions. The AI model, powered by **Random Forest Classifier**, processes user input and predicts the likelihood of heart disease.
 
 ## 🌟 Features
 - 🔐 **User Authentication:** Secure login and signup system.
@@ -13,9 +13,9 @@ The **Heart Disease Prediction** web application is an AI/ML-based solution desi
 ## 🛠 Tech Stack
 - 🏗 **Frontend:** React.js (with Vite), HTML, CSS, JavaScript
 - 🚀 **Backend:** Express.js (Node.js)
-- 🗄 **Database:** MySQL
-- 🤖 **AI/ML:** TensorFlow.js
-- ☁ **Deployment:** Hosted on Render
+- 🗄 **Database:** MySQL(Hoated On AWS)
+- 🤖 **AI/ML:** Random Forest Classifier
+- ☁ **Deployment:** Hosted on Railway
 
 ## 📝 Usage
 1. **🔑 Sign Up / Log In:** Create an account or log in.

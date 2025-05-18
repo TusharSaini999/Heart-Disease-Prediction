@@ -6,20 +6,20 @@ require('dotenv').config();
 const verifyToken = require("./verifyToken");
 const Groq = require('groq-sdk');
 
-///curl -X POST "http://localhost:4000/ai" -H "Content-Type: application/json" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMxLCJlbWFpbCI6InR1c2hhcmdAZ21haWwuY29tIiwiaWF0IjoxNzQ1OTMyOTQ1LCJleHAiOjE3NDY1Mzc3NDV9.CrCzdSFb_m1mheDyY0_AOvlvLSK30bRWMo7vNdzPHG4" -d "{\"features\": [81, 0, 3, 107, 297, 1, 1, 179, 1, 1.194321572, 2, 2, 1]}"
+///curl -X POST "http://localhost:4000/ai" -H "Content-Type: application/json" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoidHVzaGFyc2FpbmlAZ21haWwuY29tIiwiaWF0IjoxNzQ3NTM3NTQ0LCJleHAiOjE3NDgxNDIzNDR9.AEY2Lx-JRdGBq-C6RfInYcyTPqOdXZlNCC2ocsXSCCs" -d "{\"features\": [81, 0, 3, 107, 297, 1, 1, 179, 1, 1.194321572, 2, 2, 1]}"
+//{"success":true,"predicted_class":4}
+
+///curl -X POST "http://localhost:4000/ai" -H "Content-Type: application/json" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoidHVzaGFyc2FpbmlAZ21haWwuY29tIiwiaWF0IjoxNzQ3NTM3NTQ0LCJleHAiOjE3NDgxNDIzNDR9.AEY2Lx-JRdGBq-C6RfInYcyTPqOdXZlNCC2ocsXSCCs" -d "{\"features\": [63, 1, 3, 145, 233, 1, 0, 150, 0, 2.3, 0, 0, 1]}"
+//{"success":true,"predicted_class":1}
+
+///curl -X POST "http://localhost:4000/ai" -H "Content-Type: application/json" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoidHVzaGFyc2FpbmlAZ21haWwuY29tIiwiaWF0IjoxNzQ3NTM3NTQ0LCJleHAiOjE3NDgxNDIzNDR9.AEY2Lx-JRdGBq-C6RfInYcyTPqOdXZlNCC2ocsXSCCs" -d "{\"features\": [69,1,3,155,265,1,1,108,1,2.8,2,2,3]}"
+//{"success":true,"predicted_class":2}
+
+///curl -X POST "http://localhost:4000/ai" -H "Content-Type: application/json" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoidHVzaGFyc2FpbmlAZ21haWwuY29tIiwiaWF0IjoxNzQ3NTM3NTQ0LCJleHAiOjE3NDgxNDIzNDR9.AEY2Lx-JRdGBq-C6RfInYcyTPqOdXZlNCC2ocsXSCCs" -d "{\"features\": [84, 1, 3, 170, 262, 0, 1, 96, 1, 1, 2, 0, 2]}"
 ///{"predicted_class":0}
 
-///curl -X POST "http://localhost:4000/ai" -H "Content-Type: application/json" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMxLCJlbWFpbCI6InR1c2hhcmdAZ21haWwuY29tIiwiaWF0IjoxNzQ1OTMyOTQ1LCJleHAiOjE3NDY1Mzc3NDV9.CrCzdSFb_m1mheDyY0_AOvlvLSK30bRWMo7vNdzPHG4" -d "{\"features\": [63, 1, 3, 145, 233, 1, 0, 150, 0, 2.3, 0, 0, 1]}"
-///{"predicted_class":1}
-
-///curl -X POST "http://localhost:4000/ai" -H "Content-Type: application/json" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMxLCJlbWFpbCI6InR1c2hhcmdAZ21haWwuY29tIiwiaWF0IjoxNzQ1OTMyOTQ1LCJleHAiOjE3NDY1Mzc3NDV9.CrCzdSFb_m1mheDyY0_AOvlvLSK30bRWMo7vNdzPHG4" -d "{\"features\": [63, 1, 2, 105, 294, 0, 0, 137, 1, 2.3, 1, 1, 2]}"
-///{"predicted_class":2}
-
-///curl -X POST "http://localhost:4000/ai" -H "Content-Type: application/json" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoiam9obmRvZUBleGFtcGxlLmNvbSIsImlhdCI6MTc0MjQ2NDU4OSwiZXhwIjoxNzQzMDY5Mzg5fQ.NDuh8OVqV4kM6woCC8BrzXE40T7rdVBLLauGNyyoOLY" -d "{\"features\": [84, 1, 3, 170, 262, 0, 1, 96, 1, 1, 2, 0, 2]}"
+///curl -X POST "http://localhost:4000/ai" -H "Content-Type: application/json" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoidHVzaGFyc2FpbmlAZ21haWwuY29tIiwiaWF0IjoxNzQ3NTM3NTQ0LCJleHAiOjE3NDgxNDIzNDR9.AEY2Lx-JRdGBq-C6RfInYcyTPqOdXZlNCC2ocsXSCCs" -d "{\"features\": [63, 1, 2, 145, 233, 1, 1, 150, 1, 1.3, 2, 3, 3]}"
 ///{"predicted_class":3}
-
-///curl -X POST "http://localhost:4000/ai" -H "Content-Type: application/json" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoiam9obmRvZUBleGFtcGxlLmNvbSIsImlhdCI6MTc0MjQ2NDU4OSwiZXhwIjoxNzQzMDY5Mzg5fQ.NDuh8OVqV4kM6woCC8BrzXE40T7rdVBLLauGNyyoOLY" -d "{\"features\": [63, 1, 2, 145, 233, 1, 1, 150, 1, 1.3, 2, 3, 3]}"
-///{"predicted_class":4}
 
 
 router.post("/", verifyToken, async (req, res) => {
