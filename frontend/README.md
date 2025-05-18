@@ -87,10 +87,6 @@ haertsense.ai-landing-page/
 ├── tailwind.config.js  # TailwindCSS configuration
 ├── vite.config.js      # Vite configuration
 └── package.json        # Project metadata & dependencies
+
+
 ```
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License.
