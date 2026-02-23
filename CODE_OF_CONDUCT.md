@@ -1,7 +1,6 @@
 # Code of Conduct
 
 ## Our Pledge
-
 We, as contributors and maintainers of the **Heart Disease Prediction Web-Based Solution**, pledge to make participation in our community a respectful, inclusive, and harassment-free experience for everyone.
 
 We are committed to creating a welcoming environment for all, regardless of:
@@ -17,7 +16,6 @@ We are committed to creating a welcoming environment for all, regardless of:
 ---
 
 ## Our Standards
-
 Examples of behavior that contribute to a positive environment include:
 
 ✅ Being respectful and considerate  
@@ -37,7 +35,6 @@ Examples of unacceptable behavior include:
 ---
 
 ## Responsibilities
-
 Project maintainers are responsible for:
 
 - Clarifying acceptable behavior
@@ -50,7 +47,6 @@ Maintainers have the right to remove, edit, or reject contributions that violate
 ---
 
 ## Scope
-
 This Code of Conduct applies to:
 
 - GitHub repositories
@@ -65,7 +61,6 @@ Both online and offline interactions related to this project are covered.
 ---
 
 ## Enforcement
-
 If you experience or witness unacceptable behavior, please report it to the project maintainers.
 
 Reports will be reviewed confidentially and handled respectfully.
@@ -82,7 +77,6 @@ depending on the severity of the violation.
 ---
 
 ## Reporting Guidelines
-
 To report an issue, please contact:
  
 📌 **GitHub Issues:** Create a private issue (if available)
@@ -92,11 +86,9 @@ Provide as much detail as possible to help us resolve the situation.
 ---
 
 ## Attribution
-
 This Code of Conduct is adapted from the [Contributor Covenant](https://www.contributor-covenant.org/), version 2.1.
 
 ---
 
 ## Agreement
-
 By contributing to this project, you agree to follow this Code of Conduct and help maintain a positive community.
