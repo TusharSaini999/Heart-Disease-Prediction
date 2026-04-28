@@ -1,0 +1,22 @@
+# CODEOWNERS file for Heart Disease Prediction
+
+# Global owners
+* @yourusername
+
+# Frontend
+/frontend/ @yourusername
+
+# Backend
+/backend/ @yourusername
+
+# AI/ML Model
+/AI/ @yourusername
+
+# Database
+/DB/ @yourusername
+
+# GitHub configuration
+/.github/ @yourusername
+
+# Documentation
+*.md @yourusername
