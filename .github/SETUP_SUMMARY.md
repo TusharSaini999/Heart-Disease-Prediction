@@ -87,6 +87,7 @@ Please update these with your actual values:
 ## File Structure Overview
 
 ```
+
 .github/
 ├── ISSUE_TEMPLATE/
 │   ├── bug_report.md
@@ -117,6 +118,7 @@ Root Level:
 ├── CHANGELOG.md (new)
 ├── GITHUB_REFERENCE.md (new)
 └── .gitignore (new)
+
 ```
 
 All files are ready for your Heart Disease Prediction project!
