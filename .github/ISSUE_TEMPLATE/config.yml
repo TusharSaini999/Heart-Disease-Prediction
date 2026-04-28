@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: GitHub Community Support
+    url: https://github.community
+    about: Please ask and answer questions about GitHub here
+  - name: Security Issue
+    url: https://github.com/yourusername/Heart-Disease-Prediction/security/advisories
+    about: Report security vulnerabilities here

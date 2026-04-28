@@ -1,0 +1,28 @@
+name: Label Issues
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  label:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Auto-label issues
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const title = context.payload.issue.title;
+            const labels = [];
+            
+            if (title.includes('[BUG]')) labels.push('bug');
+            if (title.includes('[FEATURE]')) labels.push('enhancement');
+            if (title.includes('[DOCS]')) labels.push('documentation');
+            
+            if (labels.length > 0) {
+              github.rest.issues.addLabels({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                labels: labels
+              })
+            }
