@@ -9,13 +9,6 @@ If you discover a security vulnerability in this project, please report it respo
 2. Click "Report a vulnerability"
 3. Provide detailed information about the vulnerability
 
-## Supported Versions
-
-| Version | Supported          |
-| ------- | ------------------ |
-| 1.x.x   | :white_check_mark: |
-| < 1.0   | :x:                |
-
 ## Security Best Practices
 
 When contributing to this project:
