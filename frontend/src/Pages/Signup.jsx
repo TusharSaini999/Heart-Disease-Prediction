@@ -29,26 +29,23 @@ const Signup = () => {
     if (name === "gender") {
       value = value === "Male" ? "1" : value === "Female" ? "0" : value;
     }
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({ ...formData, [name]: value });
   };
 
   const validateForm = () => {
     const newErrors = {};
-    const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@gmail\.com$/; // restrict to Gmail per backend
 
     if (!emailPattern.test(formData.email)) {
-      newErrors.email = "Please enter a valid email address.";
+      newErrors.email = "Please enter a valid Gmail address.";
     }
-
 
     if (formData.password !== formData.confirmPassword) {
       newErrors.password = "Passwords do not match.";
     }
 
-
-    if (formData.mobile.length > 10) {
-      newErrors.mobile = "Mobile number cannot exceed 10 digits.";
+    if (!/^\d{10}$/.test(formData.mobile)) {
+      newErrors.mobile = "Mobile number must be exactly 10 digits.";
     }
 
     return newErrors;
@@ -66,7 +63,7 @@ const Signup = () => {
           email: formData.email,
           mobile_no: formData.mobile,
           dob: formData.dob,
-          gender: formData.gender === "Male" ? "1" : "0",
+          gender: formData.gender,
           password: formData.password,
         };
 
